@@ -2,10 +2,10 @@
 
 > High-performance, accessible, NativeWind-first React Native component library for the Beyond Softwares ecosystem.
 
-[![CI](https://github.com/beyondcorp/beyond-ui-native/actions/workflows/ci.yml/badge.svg)](https://github.com/beyondcorp/beyond-ui-native/actions/workflows/ci.yml)
+[![CI](https://github.com/soitechnologysolutions/beyond-ui-native/actions/workflows/ci.yml/badge.svg)](https://github.com/soitechnologysolutions/beyond-ui-native/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Built as the official mobile counterpart to [`@beyondcorp/beyond-ui`](https://github.com/beyondcorp/beyond-ui), Beyond UI Native brings unified design tokens, accessible compound primitives, full screen templates, and production-ready mobile interactions to React Native and Expo.
+Built as the official mobile counterpart to [`@beyondcorp/beyond-ui`](https://github.com/soitechnologysolutions/beyond-ui), Beyond UI Native brings unified design tokens, accessible compound primitives, full screen templates, and production-ready mobile interactions to React Native and Expo.
 
 ---
 
@@ -21,7 +21,7 @@ Built as the official mobile counterpart to [`@beyondcorp/beyond-ui`](https://gi
 
 ```bash
 # Clone the repository
-git clone https://github.com/beyondcorp/beyond-ui-native.git
+git clone https://github.com/soitechnologysolutions/beyond-ui-native.git
 cd beyond-ui-native
 
 # Install workspace dependencies

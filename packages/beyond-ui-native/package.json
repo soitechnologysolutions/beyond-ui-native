@@ -2,7 +2,30 @@
   "name": "@beyondcorp/beyond-ui-native",
   "version": "0.1.0",
   "description": "Accessible, NativeWind-first React Native component library for Beyond Softwares",
+  "author": "Beyond Corp",
   "license": "MIT",
+  "homepage": "https://github.com/soitechnologysolutions/beyond-ui-native#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soitechnologysolutions/beyond-ui-native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/soitechnologysolutions/beyond-ui-native/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "nativewind",
+    "tailwindcss",
+    "ui",
+    "components",
+    "design-system",
+    "beyond-ui",
+    "typescript"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
