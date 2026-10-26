@@ -60,10 +60,11 @@ export const SettingsTemplate: React.FC<SettingsTemplateProps> = ({
 }) => {
   return (
     <ScrollView
+      {...props}
+      style={[{ flex: 1 }, (props as any).style]}
       className={cn("flex-1 bg-background", className)}
       contentContainerStyle={{ paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}
-      {...props}
     >
       <View className="px-6 pt-6 gap-6">
         <Heading level={2} className="text-2xl font-bold text-foreground">

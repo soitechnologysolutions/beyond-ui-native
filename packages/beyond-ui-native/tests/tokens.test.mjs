@@ -1,7 +1,7 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 
-import { tokens } from "../dist/chunk-2B6HTSGM.mjs"; // or directly dist/preset.mjs
+import { tokens } from "../dist/preset.mjs";
 
 describe("Design Tokens System", () => {
   test("contains complete color scales (50-950) for all semantic palettes", () => {

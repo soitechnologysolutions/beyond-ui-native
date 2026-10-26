@@ -1,5 +1,7 @@
 import { tokens } from "./tokens";
 
+export { tokens };
+
 export const beyondUIPreset = {
   darkMode: "class",
   theme: {
@@ -12,6 +14,20 @@ export const beyondUIPreset = {
         success: tokens.colors.success,
         warning: tokens.colors.warning,
         neutral: tokens.colors.neutral,
+        background: tokens.colors.semantic.light.background,
+        foreground: tokens.colors.semantic.light.foreground,
+        card: {
+          DEFAULT: tokens.colors.semantic.light.card,
+          foreground: tokens.colors.semantic.light.cardForeground,
+        },
+        cardForeground: tokens.colors.semantic.light.cardForeground,
+        muted: {
+          DEFAULT: tokens.colors.semantic.light.mutedForeground,
+          foreground: tokens.colors.semantic.light.mutedForeground,
+        },
+        mutedForeground: tokens.colors.semantic.light.mutedForeground,
+        border: tokens.colors.semantic.light.border,
+        input: tokens.colors.semantic.light.input,
       },
       borderRadius: {
         none: "0px",

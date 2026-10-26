@@ -87,9 +87,11 @@ export const SignUpTemplate: React.FC<SignUpTemplateProps> = ({
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
       className={cn("flex-1 bg-background", className)}
     >
       <ScrollView
+        style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
         className="px-6 py-8"
         keyboardShouldPersistTaps="handled"

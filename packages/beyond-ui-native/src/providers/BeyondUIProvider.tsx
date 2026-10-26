@@ -86,7 +86,10 @@ export function BeyondUIProvider({
   return (
     <BeyondUIContext.Provider value={contextValue}>
       <ToastContext.Provider value={toastContextValue}>
-        <View className={activeScheme === "dark" ? "dark flex-1" : "flex-1"}>
+        <View
+          style={{ flex: 1 }}
+          className={activeScheme === "dark" ? "dark flex-1" : "flex-1"}
+        >
           {children}
           <PortalHost />
           <ToastContainer toasts={toasts} onDismiss={dismissToast} />

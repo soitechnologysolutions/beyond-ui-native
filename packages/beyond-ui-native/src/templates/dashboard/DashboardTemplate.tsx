@@ -67,10 +67,11 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
 }) => {
   return (
     <ScrollView
+      {...props}
+      style={[{ flex: 1 }, (props as any).style]}
       className={cn("flex-1 bg-background", className)}
       contentContainerStyle={{ paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}
-      {...props}
     >
       {/* Top Greeting Header */}
       <View className="px-6 pt-6 pb-4 flex-row items-center justify-between border-b border-border/40">

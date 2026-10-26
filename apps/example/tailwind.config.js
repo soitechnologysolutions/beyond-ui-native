@@ -7,7 +7,7 @@ module.exports = {
   ],
   presets: [
     require("nativewind/preset"),
-    require("../../packages/beyond-ui-native/src/theme/preset").beyondUIPreset,
+    require("@beyondcorp/beyond-ui-native/preset").beyondUIPreset,
   ],
   theme: {
     extend: {},

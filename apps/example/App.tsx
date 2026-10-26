@@ -1,6 +1,6 @@
 import "./global.css";
 import * as React from "react";
-import { ScrollView, View, SafeAreaView, StatusBar, Pressable } from "react-native";
+import { ScrollView, View, SafeAreaView, StatusBar, Pressable, Platform } from "react-native";
 import {
   BeyondUIProvider,
   useBeyondUI,
@@ -84,6 +84,7 @@ function ComponentsShowcase() {
 
   return (
     <ScrollView
+      style={{ flex: 1 }}
       contentContainerStyle={{ padding: 16, paddingBottom: 64 }}
       showsVerticalScrollIndicator={false}
       className="flex-1"
@@ -399,7 +400,13 @@ function ShowcaseApp() {
   const [activeTab, setActiveTab] = React.useState<"components" | "auth" | "dashboard" | "settings">("components");
 
   return (
-    <SafeAreaView className="flex-1 bg-neutral-50 dark:bg-neutral-950">
+    <SafeAreaView
+      style={{
+        flex: 1,
+        paddingTop: Platform.OS === "android" ? (StatusBar.currentHeight || 0) : 0,
+      }}
+      className="flex-1 bg-neutral-50 dark:bg-neutral-950"
+    >
       <StatusBar barStyle={colorScheme === "dark" ? "light-content" : "dark-content"} />
 
       {/* Top Header & Navigation Bar */}
@@ -454,7 +461,7 @@ function ShowcaseApp() {
       </View>
 
       {/* Active View */}
-      <View className="flex-1">
+      <View style={{ flex: 1 }} className="flex-1">
         {activeTab === "components" && <ComponentsShowcase />}
         {activeTab === "auth" && (
           <SignInTemplate
