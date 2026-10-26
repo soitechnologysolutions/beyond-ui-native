@@ -26,9 +26,10 @@ android/
 .env.local
 .env.*.local
 
-# OS
+# OS & IDE
 .DS_Store
 Thumbs.db
+.idea/
 
 # Storybook
 storybook-static/

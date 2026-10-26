@@ -1,49 +1,76 @@
 import * as React from "react";
-import { Text } from "react-native";
-import * as TabsPrimitive from "@rn-primitives/tabs";
+import {
+  View,
+  Text,
+  Pressable,
+  type ViewProps,
+  type PressableProps,
+  type GestureResponderEvent,
+} from "react-native";
 import { cn } from "../../utilities/cn";
 
-export interface TabsProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>, "value" | "onValueChange"> {
+export interface TabsContextValue {
+  value: string;
+  onValueChange: (value: string) => void;
+}
+
+export const TabsContext = React.createContext<TabsContextValue | null>(null);
+
+export function useTabsContext(): TabsContextValue {
+  const context = React.useContext(TabsContext);
+  if (!context) {
+    throw new Error("Tabs compound components must be rendered inside a Tabs component");
+  }
+  return context;
+}
+
+export interface TabsProps extends ViewProps {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   className?: string;
 }
 
-export const Tabs = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Root>,
-  TabsProps
->(function Tabs({ value: controlledValue, defaultValue = "", onValueChange, ...props }, ref) {
+export const Tabs = React.forwardRef<View, TabsProps>(function Tabs(
+  { value: controlledValue, defaultValue = "", onValueChange, className, children, ...props },
+  ref
+) {
   const [internalValue, setInternalValue] = React.useState(defaultValue);
   const isControlled = controlledValue !== undefined;
   const currentValue = isControlled ? controlledValue : internalValue;
 
-  const handleValueChange = (val: string) => {
-    if (!isControlled) setInternalValue(val);
-    onValueChange?.(val);
-  };
+  const handleValueChange = React.useCallback(
+    (val: string) => {
+      if (!isControlled) {
+        setInternalValue(val);
+      }
+      onValueChange?.(val);
+    },
+    [isControlled, onValueChange]
+  );
 
   return (
-    <TabsPrimitive.Root
-      ref={ref}
-      value={currentValue}
-      onValueChange={handleValueChange}
-      {...props}
-    />
+    <TabsContext.Provider value={{ value: currentValue, onValueChange: handleValueChange }}>
+      <View ref={ref} className={className} {...props}>
+        {children}
+      </View>
+    </TabsContext.Provider>
   );
 });
 Tabs.displayName = "Tabs";
 
-export const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> & {
-    className?: string;
-  }
->(function TabsList({ className, ...props }, ref) {
+export interface TabsListProps extends ViewProps {
+  className?: string;
+}
+
+export const TabsList = React.forwardRef<View, TabsListProps>(function TabsList(
+  { className, ...props },
+  ref
+) {
   return (
-    <TabsPrimitive.List
+    <View
       ref={ref}
+      role="tablist"
       className={cn(
         "flex-row items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800 p-1",
         className
@@ -54,26 +81,41 @@ export const TabsList = React.forwardRef<
 });
 TabsList.displayName = "TabsList";
 
+export interface TabsTriggerProps extends Omit<PressableProps, "onPress"> {
+  value: string;
+  className?: string;
+  textClassName?: string;
+  children?: React.ReactNode;
+  onPress?: (e: GestureResponderEvent) => void;
+}
+
 export const TabsTrigger = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> & {
-    className?: string;
-    textClassName?: string;
-    children?: React.ReactNode;
-  }
->(function TabsTrigger({ className, textClassName, children, ...props }, ref) {
-  const { value } = TabsPrimitive.useRootContext();
-  const isSelected = value === props.value;
+  React.ElementRef<typeof Pressable>,
+  TabsTriggerProps
+>(function TabsTrigger({ value, className, textClassName, children, onPress, disabled, ...props }, ref) {
+  const { value: selectedValue, onValueChange } = useTabsContext();
+  const isSelected = selectedValue === value;
+
+  const handlePress = (e: GestureResponderEvent) => {
+    if (disabled) return;
+    onValueChange(value);
+    onPress?.(e);
+  };
 
   return (
-    <TabsPrimitive.Trigger
+    <Pressable
       ref={ref}
+      role="tab"
+      accessibilityRole="tab"
+      accessibilityState={{ selected: isSelected, disabled: !!disabled }}
+      disabled={disabled}
+      onPress={handlePress}
       className={cn(
         "flex-1 items-center justify-center rounded-lg py-2 px-3 transition-all",
         isSelected
           ? "bg-white dark:bg-neutral-900 shadow-sm"
           : "bg-transparent opacity-70",
-        props.disabled && "opacity-40",
+        disabled && "opacity-40",
         className
       )}
       {...props}
@@ -93,23 +135,38 @@ export const TabsTrigger = React.forwardRef<
       ) : (
         children
       )}
-    </TabsPrimitive.Trigger>
+    </Pressable>
   );
 });
 TabsTrigger.displayName = "TabsTrigger";
 
-export const TabsContent = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content> & {
-    className?: string;
+export interface TabsContentProps extends ViewProps {
+  value: string;
+  className?: string;
+  forceMount?: boolean;
+}
+
+export const TabsContent = React.forwardRef<View, TabsContentProps>(function TabsContent(
+  { value, className, forceMount, children, ...props },
+  ref
+) {
+  const { value: selectedValue } = useTabsContext();
+  const isSelected = selectedValue === value;
+
+  if (!isSelected && !forceMount) {
+    return null;
   }
->(function TabsContent({ className, ...props }, ref) {
+
   return (
-    <TabsPrimitive.Content
+    <View
       ref={ref}
+      role="tabpanel"
+      accessibilityElementsHidden={!isSelected}
       className={cn("mt-3", className)}
       {...props}
-    />
+    >
+      {children}
+    </View>
   );
 });
 TabsContent.displayName = "TabsContent";

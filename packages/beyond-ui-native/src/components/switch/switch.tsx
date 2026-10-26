@@ -1,39 +1,79 @@
 import * as React from "react";
-import * as SwitchPrimitive from "@rn-primitives/switch";
+import {
+  Pressable,
+  View,
+  type GestureResponderEvent,
+  type PressableProps,
+} from "react-native";
 import { cn } from "../../utilities/cn";
 
-export interface SwitchProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof SwitchPrimitive.Root>, "onCheckedChange"> {
+export interface SwitchProps extends Omit<PressableProps, "onPress"> {
+  checked?: boolean;
+  defaultChecked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+  disabled?: boolean;
   className?: string;
   thumbClassName?: string;
-  onCheckedChange?: (checked: boolean) => void;
+  onPress?: (event: GestureResponderEvent) => void;
 }
 
 export const Switch = React.forwardRef<
-  React.ElementRef<typeof SwitchPrimitive.Root>,
+  React.ElementRef<typeof Pressable>,
   SwitchProps
->(function Switch({ className, thumbClassName, onCheckedChange, ...props }, ref) {
+>(function Switch(
+  {
+    checked: controlledChecked,
+    defaultChecked = false,
+    onCheckedChange,
+    disabled = false,
+    className,
+    thumbClassName,
+    onPress,
+    ...props
+  },
+  ref
+) {
+  const [uncontrolledChecked, setUncontrolledChecked] = React.useState(defaultChecked);
+  const isControlled = controlledChecked !== undefined;
+  const isChecked = isControlled ? controlledChecked : uncontrolledChecked;
+
+  const handlePress = (e: GestureResponderEvent) => {
+    if (disabled) return;
+    const nextChecked = !isChecked;
+    if (!isControlled) {
+      setUncontrolledChecked(nextChecked);
+    }
+    onCheckedChange?.(nextChecked);
+    onPress?.(e);
+  };
+
   return (
-    <SwitchPrimitive.Root
+    <Pressable
       ref={ref}
-      onCheckedChange={onCheckedChange ?? (() => {})}
+      role="switch"
+      accessibilityRole="switch"
+      accessibilityState={{ checked: isChecked, disabled: !!disabled }}
+      disabled={disabled}
+      onPress={handlePress}
       className={cn(
         "h-7 w-12 shrink-0 flex-row items-center rounded-full p-0.5 transition-colors",
-        "bg-neutral-300 dark:bg-neutral-700 web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-primary-500",
-        props.checked ? "bg-primary-600 dark:bg-primary-600" : "bg-neutral-300 dark:bg-neutral-700",
-        props.disabled && "opacity-50",
+        isChecked
+          ? "bg-primary-600 dark:bg-primary-600"
+          : "bg-neutral-300 dark:bg-neutral-700",
+        disabled && "opacity-50",
         className
       )}
       {...props}
     >
-      <SwitchPrimitive.Thumb
+      <View
+        role="presentation"
         className={cn(
-          "h-6 w-6 rounded-full bg-white shadow-md transition-transform",
-          props.checked ? "translate-x-5" : "translate-x-0",
+          "h-6 w-6 rounded-full bg-white shadow-sm transition-transform",
+          isChecked ? "translate-x-5" : "translate-x-0",
           thumbClassName
         )}
       />
-    </SwitchPrimitive.Root>
+    </Pressable>
   );
 });
 
