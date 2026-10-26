@@ -1,6 +1,6 @@
 {
   "name": "@beyondcorp/beyond-ui-native",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Accessible, NativeWind-first React Native component library for Beyond Softwares",
   "author": "Beyond Corp",
   "license": "MIT",
@@ -28,12 +28,15 @@
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
+  "react-native": "./src/index.ts",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "react-native": "./src/index.ts",
+      "import": "./src/index.ts",
+      "require": "./dist/index.js",
+      "default": "./src/index.ts"
     },
     "./preset": {
       "types": "./dist/preset.d.ts",
@@ -42,12 +45,15 @@
     },
     "./utilities": {
       "types": "./dist/utilities.d.ts",
-      "import": "./dist/utilities.mjs",
-      "require": "./dist/utilities.js"
+      "react-native": "./src/utilities/index.ts",
+      "import": "./src/utilities/index.ts",
+      "require": "./dist/utilities.js",
+      "default": "./src/utilities/index.ts"
     }
   },
   "files": [
     "dist",
+    "src",
     "README.md",
     "LICENSE"
   ],
