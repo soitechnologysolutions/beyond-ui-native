@@ -1,5 +1,6 @@
 import * as React from "react";
 import { View, useColorScheme as useRNColorScheme } from "react-native";
+import { colorScheme as nwColorScheme } from "nativewind";
 import { PortalHost } from "@rn-primitives/portal";
 import { ToastContext, ToastItem, ToastContextValue } from "../components/toast/types";
 import { ToastContainer } from "../components/toast/toast";
@@ -38,10 +39,28 @@ export function BeyondUIProvider({
   const activeScheme: "light" | "dark" =
     selectedScheme === "system" ? systemScheme : selectedScheme;
 
+  // Sync NativeWind colorScheme store with BeyondUIProvider active scheme
+  React.useEffect(() => {
+    try {
+      nwColorScheme.set(selectedScheme === "system" ? "system" : activeScheme);
+    } catch (_) {}
+  }, [selectedScheme, activeScheme]);
+
+  const handleSetColorScheme = React.useCallback((scheme: ColorScheme) => {
+    setSelectedScheme(scheme);
+    try {
+      nwColorScheme.set(scheme === "system" ? "system" : scheme);
+    } catch (_) {}
+  }, []);
+
   const toggleColorScheme = React.useCallback(() => {
     setSelectedScheme((prev) => {
       const current = prev === "system" ? systemScheme : prev;
-      return current === "dark" ? "light" : "dark";
+      const next = current === "dark" ? "light" : "dark";
+      try {
+        nwColorScheme.set(next);
+      } catch (_) {}
+      return next;
     });
   }, [systemScheme]);
 
@@ -77,10 +96,10 @@ export function BeyondUIProvider({
   const contextValue: BeyondUIContextValue = React.useMemo(
     () => ({
       colorScheme: activeScheme,
-      setColorScheme: setSelectedScheme,
+      setColorScheme: handleSetColorScheme,
       toggleColorScheme,
     }),
-    [activeScheme, toggleColorScheme]
+    [activeScheme, handleSetColorScheme, toggleColorScheme]
   );
 
   return (
@@ -88,7 +107,7 @@ export function BeyondUIProvider({
       <ToastContext.Provider value={toastContextValue}>
         <View
           style={{ flex: 1 }}
-          className={activeScheme === "dark" ? "dark flex-1" : "flex-1"}
+          className={activeScheme === "dark" ? "dark flex-1 bg-neutral-950" : "flex-1 bg-white"}
         >
           {children}
           <PortalHost />

@@ -193,14 +193,14 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
             ref={ref}
             style={{ transform: [{ translateY }] }}
             className={cn(
-              "w-full bg-card rounded-t-3xl border-t border-border shadow-2xl pt-2 pb-8 px-6 max-h-[85%]",
+              "w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 shadow-2xl pt-2 pb-8 px-6 max-h-[85%]",
               className
             )}
             {...props}
           >
             {/* Drag Handle Bar */}
             <View {...panResponder.panHandlers} className="w-full py-2 items-center">
-              <View className="w-12 h-1.5 rounded-full bg-muted/40" />
+              <View className="w-12 h-1.5 rounded-full bg-neutral-300 dark:bg-neutral-700" />
             </View>
 
             {children}
@@ -240,7 +240,7 @@ export const BottomSheetTitle: React.FC<BottomSheetTitleProps> = ({
   children,
 }) => {
   return (
-    <Heading level={4} className={cn("text-xl font-bold text-foreground", className)}>
+    <Heading level={4} className={cn("text-xl font-bold text-neutral-900 dark:text-neutral-50", className)}>
       {children}
     </Heading>
   );
@@ -259,7 +259,7 @@ export const BottomSheetDescription: React.FC<BottomSheetDescriptionProps> = ({
   children,
 }) => {
   return (
-    <Text className={cn("text-sm text-muted", className)}>
+    <Text className={cn("text-sm text-neutral-500 dark:text-neutral-400", className)}>
       {children}
     </Text>
   );

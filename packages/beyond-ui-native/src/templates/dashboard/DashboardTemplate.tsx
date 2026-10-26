@@ -81,10 +81,10 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
             <AvatarFallback text={userName.slice(0, 2).toUpperCase()} />
           </Avatar>
           <View>
-            <Text className="text-xs text-muted font-medium uppercase tracking-wider">
+            <Text className="text-xs text-neutral-500 dark:text-neutral-400 font-medium uppercase tracking-wider">
               {userRole}
             </Text>
-            <Heading level={3} className="text-xl font-bold text-foreground">
+            <Heading level={3} className="text-xl font-bold text-neutral-900 dark:text-neutral-50">
               Hello, {userName} 👋
             </Heading>
           </View>
@@ -93,9 +93,9 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
         {onNotificationPress && (
           <Pressable
             onPress={onNotificationPress}
-            className="w-10 h-10 rounded-full border border-border bg-card items-center justify-center relative active:opacity-70"
+            className="w-10 h-10 rounded-full border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 items-center justify-center relative active:opacity-70"
           >
-            <Text className="text-base text-foreground">🔔</Text>
+            <Text className="text-base text-neutral-900 dark:text-neutral-100">🔔</Text>
             {unreadNotificationsCount > 0 && (
               <View className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-danger items-center justify-center">
                 <Text className="text-[10px] font-bold text-white">
@@ -111,7 +111,7 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
         {/* Quick Actions */}
         {quickActions && quickActions.length > 0 && (
           <View className="gap-2">
-            <Text className="text-xs font-bold text-muted uppercase tracking-wider">
+            <Text className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
               Quick Actions
             </Text>
             <ScrollView
@@ -126,7 +126,6 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
                     variant="outline"
                     size="sm"
                     onPress={action.onPress}
-                    className="bg-card shadow-sm"
                   >
                     {action.icon ? `${action.icon} ${action.label}` : action.label}
                   </Button>
@@ -138,7 +137,7 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
 
         {/* Metrics Grid */}
         <View className="gap-3">
-          <Text className="text-xs font-bold text-muted uppercase tracking-wider">
+          <Text className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
             Overview Performance
           </Text>
           <View className="gap-3">
@@ -155,7 +154,7 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
               <CardTitle className="text-base font-bold">Recent Activity</CardTitle>
               {onViewAllActivities && (
                 <Pressable onPress={onViewAllActivities}>
-                  <Text className="text-xs font-semibold text-primary">View all</Text>
+                  <Text className="text-xs font-semibold text-primary-600 dark:text-primary-400">View all</Text>
                 </Pressable>
               )}
             </CardHeader>
@@ -163,7 +162,7 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
               {recentActivities.map((act) => (
                 <View
                   key={act.id}
-                  className="flex-row items-center justify-between py-2 border-b border-border/40 last:border-b-0"
+                  className="flex-row items-center justify-between py-2 border-b border-neutral-200 dark:border-neutral-800 last:border-b-0"
                 >
                   <View className="flex-row items-center gap-3 flex-1 pr-2">
                     <Avatar size="sm">
@@ -173,10 +172,10 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
                       />
                     </Avatar>
                     <View className="flex-1">
-                      <Text className="text-sm font-semibold text-foreground" numberOfLines={1}>
+                      <Text className="text-sm font-semibold text-neutral-900 dark:text-neutral-100" numberOfLines={1}>
                         {act.title}
                       </Text>
-                      <Text className="text-xs text-muted" numberOfLines={1}>
+                      <Text className="text-xs text-neutral-500 dark:text-neutral-400" numberOfLines={1}>
                         {act.subtitle} • {act.timestamp}
                       </Text>
                     </View>
@@ -184,7 +183,7 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
 
                   <View className="items-end gap-1">
                     {act.amount && (
-                      <Text className="text-sm font-bold text-foreground">
+                      <Text className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
                         {act.amount}
                       </Text>
                     )}

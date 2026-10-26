@@ -410,13 +410,13 @@ function ShowcaseApp() {
       <StatusBar barStyle={colorScheme === "dark" ? "light-content" : "dark-content"} />
 
       {/* Top Header & Navigation Bar */}
-      <View className="px-4 py-3 border-b border-border/50 bg-card">
+      <View className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
         <View className="flex-row items-center justify-between pb-3">
           <View>
-            <Text className="text-xs font-bold text-primary uppercase tracking-wider">
+            <Text className="text-xs font-bold text-primary-600 dark:text-primary-400 uppercase tracking-wider">
               Beyond Softwares
             </Text>
-            <Heading level={3} className="text-xl font-extrabold text-foreground">
+            <Heading level={3} className="text-xl font-extrabold text-neutral-900 dark:text-neutral-50">
               Beyond UI Native
             </Heading>
           </View>

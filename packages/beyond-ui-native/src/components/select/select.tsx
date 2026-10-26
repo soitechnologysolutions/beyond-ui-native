@@ -12,11 +12,11 @@ import { cn } from "../../utilities/cn";
 import { Text } from "../text/text";
 
 const selectTriggerVariants = cva(
-  "flex-row items-center justify-between rounded-xl border bg-card px-4 py-3 active:opacity-80",
+  "flex-row items-center justify-between rounded-xl border bg-white dark:bg-neutral-900 px-4 py-3 active:opacity-80",
   {
     variants: {
       variant: {
-        default: "border-border",
+        default: "border-neutral-300 dark:border-neutral-700",
         error: "border-danger",
         success: "border-success",
       },
@@ -130,7 +130,7 @@ export const Select: React.FC<SelectProps> = ({
     >
       <View className={cn("w-full gap-1.5", className)}>
         {label && (
-          <Text className="text-sm font-medium text-foreground">{label}</Text>
+          <Text className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{label}</Text>
         )}
 
         {children ? (
@@ -149,19 +149,21 @@ export const Select: React.FC<SelectProps> = ({
             <Text
               className={cn(
                 "text-base",
-                displayLabel ? "text-foreground font-medium" : "text-muted"
+                displayLabel
+                  ? "text-neutral-900 dark:text-neutral-100 font-medium"
+                  : "text-neutral-500 dark:text-neutral-400 font-normal"
               )}
             >
               {displayLabel || placeholder}
             </Text>
-            <Text className="text-muted text-xs">▼</Text>
+            <Text className="text-neutral-500 dark:text-neutral-400 text-xs">▼</Text>
           </Pressable>
         )}
 
         {error ? (
           <Text className="text-xs text-danger font-medium">{error}</Text>
         ) : helperText ? (
-          <Text className="text-xs text-muted">{helperText}</Text>
+          <Text className="text-xs text-neutral-500 dark:text-neutral-400">{helperText}</Text>
         ) : null}
 
         {/* Modal Options Picker if options prop was passed */}
@@ -175,13 +177,13 @@ export const Select: React.FC<SelectProps> = ({
           >
             <View className="flex-1 justify-end bg-black/60">
               <Pressable className="flex-1" onPress={() => setOpen(false)} />
-              <View className="w-full bg-card rounded-t-3xl border-t border-border p-6 max-h-[75%]">
-                <View className="flex-row items-center justify-between pb-4 border-b border-border mb-3">
-                  <Text className="text-lg font-bold text-foreground">
+              <View className="w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 p-6 max-h-[75%]">
+                <View className="flex-row items-center justify-between pb-4 border-b border-neutral-200 dark:border-neutral-800 mb-3">
+                  <Text className="text-lg font-bold text-neutral-900 dark:text-neutral-50">
                     {label || placeholder}
                   </Text>
                   <Pressable onPress={() => setOpen(false)} className="p-1">
-                    <Text className="text-muted text-lg font-semibold">✕</Text>
+                    <Text className="text-neutral-500 dark:text-neutral-400 text-lg font-semibold">✕</Text>
                   </Pressable>
                 </View>
 
@@ -192,7 +194,7 @@ export const Select: React.FC<SelectProps> = ({
                       onChangeText={setSearchQuery}
                       placeholder="Search options..."
                       placeholderTextColor="#9ca3af"
-                      className="h-11 px-4 rounded-xl border border-border bg-background text-foreground text-base"
+                      className="h-11 px-4 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-base"
                     />
                   </View>
                 )}
@@ -200,7 +202,7 @@ export const Select: React.FC<SelectProps> = ({
                 <ScrollView className="max-h-80" showsVerticalScrollIndicator={false}>
                   {filteredOptions.length === 0 ? (
                     <View className="py-8 items-center">
-                      <Text className="text-muted text-sm">No options found</Text>
+                      <Text className="text-neutral-500 dark:text-neutral-400 text-sm">No options found</Text>
                     </View>
                   ) : (
                     filteredOptions.map((opt) => {
@@ -211,8 +213,8 @@ export const Select: React.FC<SelectProps> = ({
                           disabled={opt.disabled}
                           onPress={() => handleSelect(opt.value)}
                           className={cn(
-                            "flex-row items-center justify-between py-3.5 px-3 rounded-xl active:bg-muted/10",
-                            isSelected && "bg-primary/10",
+                            "flex-row items-center justify-between py-3.5 px-3 rounded-xl active:bg-neutral-100 dark:active:bg-neutral-800",
+                            isSelected && "bg-primary-50 dark:bg-primary-950/40",
                             opt.disabled && "opacity-40"
                           )}
                         >
@@ -220,14 +222,14 @@ export const Select: React.FC<SelectProps> = ({
                             className={cn(
                               "text-base",
                               isSelected
-                                ? "text-primary font-semibold"
-                                : "text-foreground font-normal"
+                                ? "text-primary-600 dark:text-primary-400 font-semibold"
+                                : "text-neutral-900 dark:text-neutral-100 font-normal"
                             )}
                           >
                             {opt.label}
                           </Text>
                           {isSelected && (
-                            <Text className="text-primary font-bold text-base">✓</Text>
+                            <Text className="text-primary-600 dark:text-primary-400 font-bold text-base">✓</Text>
                           )}
                         </Pressable>
                       );
@@ -263,13 +265,13 @@ export const SelectTrigger: React.FC<SelectTriggerProps> = ({
       accessibilityRole="combobox"
       accessibilityState={{ expanded: open }}
       className={cn(
-        "flex-row items-center justify-between rounded-xl border border-border bg-card px-4 py-3 active:opacity-80",
+        "flex-row items-center justify-between rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 active:opacity-80",
         className
       )}
       {...props}
     >
       {children}
-      <Text className="text-muted text-xs">▼</Text>
+      <Text className="text-neutral-500 dark:text-neutral-400 text-xs">▼</Text>
     </Pressable>
   );
 };
@@ -289,7 +291,7 @@ export const SelectValue: React.FC<SelectValueProps> = ({
     <Text
       className={cn(
         "text-base",
-        value ? "text-foreground font-medium" : "text-muted",
+        value ? "text-neutral-900 dark:text-neutral-100 font-medium" : "text-neutral-500 dark:text-neutral-400",
         className
       )}
     >
@@ -318,11 +320,11 @@ export const SelectContent: React.FC<SelectContentProps> = ({ title, children })
     >
       <View className="flex-1 justify-end bg-black/60">
         <Pressable className="flex-1" onPress={() => setOpen(false)} />
-        <View className="w-full bg-card rounded-t-3xl border-t border-border p-6 max-h-[75%]">
-          <View className="flex-row items-center justify-between pb-3 border-b border-border mb-3">
-            <Text className="text-lg font-bold text-foreground">{title || "Select"}</Text>
+        <View className="w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 p-6 max-h-[75%]">
+          <View className="flex-row items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-800 mb-3">
+            <Text className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{title || "Select"}</Text>
             <Pressable onPress={() => setOpen(false)} className="p-1">
-              <Text className="text-muted text-lg font-semibold">✕</Text>
+              <Text className="text-neutral-500 dark:text-neutral-400 text-lg font-semibold">✕</Text>
             </Pressable>
           </View>
           <ScrollView className="max-h-80">{children}</ScrollView>
@@ -351,8 +353,8 @@ export const SelectItem: React.FC<SelectItemProps> = ({
     <Pressable
       onPress={() => onSelect(itemValue)}
       className={cn(
-        "flex-row items-center justify-between py-3.5 px-3 rounded-xl active:bg-muted/10",
-        isSelected && "bg-primary/10",
+        "flex-row items-center justify-between py-3.5 px-3 rounded-xl active:bg-neutral-100 dark:active:bg-neutral-800",
+        isSelected && "bg-primary-50 dark:bg-primary-950/40",
         className
       )}
     >
@@ -360,7 +362,7 @@ export const SelectItem: React.FC<SelectItemProps> = ({
         <Text
           className={cn(
             "text-base",
-            isSelected ? "text-primary font-semibold" : "text-foreground font-normal"
+            isSelected ? "text-primary-600 dark:text-primary-400 font-semibold" : "text-neutral-900 dark:text-neutral-100 font-normal"
           )}
         >
           {children}
@@ -368,7 +370,7 @@ export const SelectItem: React.FC<SelectItemProps> = ({
       ) : (
         children
       )}
-      {isSelected && <Text className="text-primary font-bold text-base">✓</Text>}
+      {isSelected && <Text className="text-primary-600 dark:text-primary-400 font-bold text-base">✓</Text>}
     </Pressable>
   );
 };

@@ -124,7 +124,6 @@ export function DataTable<T extends Record<string, any>>({
             setSearch(val);
             setCurrentPage(1);
           }}
-          className="bg-card"
         />
       )}
 
@@ -137,7 +136,7 @@ export function DataTable<T extends Record<string, any>>({
         </View>
       ) : paginatedData.length === 0 ? (
         <Card className="items-center justify-center p-8">
-          <Text className="text-muted text-base">{emptyText}</Text>
+          <Text className="text-neutral-500 dark:text-neutral-400 text-base">{emptyText}</Text>
         </Card>
       ) : mode === "card" ? (
         /* Mobile Card Mode */
@@ -157,14 +156,14 @@ export function DataTable<T extends Record<string, any>>({
                   return (
                     <View
                       key={String(col.key)}
-                      className="flex-row items-center justify-between py-1 border-b border-border/40 last:border-b-0"
+                      className="flex-row items-center justify-between py-1 border-b border-neutral-200 dark:border-neutral-800 last:border-b-0"
                     >
-                      <Text className="text-xs font-semibold text-muted uppercase tracking-wider">
+                      <Text className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                         {col.title}
                       </Text>
                       <View className="shrink">
                         {typeof renderedVal === "string" ? (
-                          <Text className="text-sm font-medium text-foreground">
+                          <Text className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                             {renderedVal}
                           </Text>
                         ) : (
@@ -181,9 +180,9 @@ export function DataTable<T extends Record<string, any>>({
       ) : (
         /* Horizontal Table Mode */
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View className="rounded-2xl border border-border bg-card overflow-hidden">
+          <View className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden">
             {/* Header */}
-            <View className="flex-row bg-muted/10 border-b border-border">
+            <View className="flex-row bg-neutral-100 dark:bg-neutral-800/60 border-b border-neutral-200 dark:border-neutral-800">
               {columns.map((col) => (
                 <Pressable
                   key={String(col.key)}
@@ -192,11 +191,11 @@ export function DataTable<T extends Record<string, any>>({
                   style={{ width: col.width || 120 }}
                   className="px-4 py-3 flex-row items-center justify-between"
                 >
-                  <Text className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  <Text className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wider">
                     {col.title}
                   </Text>
                   {col.sortable && (
-                    <Text className="text-xs text-muted">
+                    <Text className="text-xs text-neutral-500 dark:text-neutral-400">
                       {sortKey === col.key
                         ? sortDirection === "asc"
                           ? "▲"
@@ -214,7 +213,7 @@ export function DataTable<T extends Record<string, any>>({
                 key={keyExtractor(item, idx)}
                 disabled={!onRowPress}
                 onPress={() => onRowPress?.(item)}
-                className="flex-row border-b border-border/60 active:bg-muted/10"
+                className="flex-row border-b border-neutral-200 dark:border-neutral-800 active:bg-neutral-100 dark:active:bg-neutral-800"
               >
                 {columns.map((col) => {
                   const rawVal = item[col.key as string];
@@ -227,7 +226,7 @@ export function DataTable<T extends Record<string, any>>({
                       className="px-4 py-3 justify-center"
                     >
                       {typeof renderedVal === "string" ? (
-                        <Text className="text-sm text-foreground">{renderedVal}</Text>
+                        <Text className="text-sm text-neutral-900 dark:text-neutral-100">{renderedVal}</Text>
                       ) : (
                         renderedVal
                       )}
@@ -243,7 +242,7 @@ export function DataTable<T extends Record<string, any>>({
       {/* Pagination Footer */}
       {totalPages > 1 && (
         <View className="flex-row items-center justify-between pt-2">
-          <Text className="text-xs text-muted">
+          <Text className="text-xs text-neutral-500 dark:text-neutral-400">
             Showing {(currentPage - 1) * pageSize + 1} -{" "}
             {Math.min(currentPage * pageSize, sortedData.length)} of{" "}
             {sortedData.length}
@@ -258,7 +257,7 @@ export function DataTable<T extends Record<string, any>>({
             >
               Prev
             </Button>
-            <Text className="text-xs font-medium text-foreground px-1">
+            <Text className="text-xs font-medium text-neutral-900 dark:text-neutral-100 px-1">
               {currentPage} / {totalPages}
             </Text>
             <Button
