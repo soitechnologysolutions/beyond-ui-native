@@ -1,0 +1,63 @@
+{
+  "name": "@beyondcorp/beyond-ui-native",
+  "version": "0.1.0",
+  "description": "Accessible, NativeWind-first React Native component library for Beyond Softwares",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./preset": {
+      "types": "./dist/preset.d.ts",
+      "import": "./dist/preset.mjs",
+      "require": "./dist/preset.js"
+    },
+    "./utilities": {
+      "types": "./dist/utilities.d.ts",
+      "import": "./dist/utilities.mjs",
+      "require": "./dist/utilities.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {
+    "react": ">=18.2.0",
+    "react-native": ">=0.74.0",
+    "nativewind": "^4.0.1"
+  },
+  "dependencies": {
+    "@rn-primitives/checkbox": "^1.1.0",
+    "@rn-primitives/dialog": "^1.1.0",
+    "@rn-primitives/portal": "^1.1.0",
+    "@rn-primitives/slot": "^1.1.0",
+    "@rn-primitives/switch": "^1.1.0",
+    "@rn-primitives/tabs": "^1.1.0",
+    "@rn-primitives/types": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-native": "^0.73.0",
+    "nativewind": "^4.0.1",
+    "react": "18.3.1",
+    "react-native": "0.76.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.4.5"
+  }
+}
