@@ -8,6 +8,7 @@ import {
   type GestureResponderEvent,
 } from "react-native";
 import { cn } from "../../utilities/cn";
+import { isTextContent } from "../../utilities/is-text";
 
 export interface TabsContextValue {
   value: string;
@@ -120,7 +121,7 @@ export const TabsTrigger = React.forwardRef<
       )}
       {...props}
     >
-      {typeof children === "string" ? (
+      {isTextContent(children) ? (
         <Text
           className={cn(
             "text-sm font-semibold",

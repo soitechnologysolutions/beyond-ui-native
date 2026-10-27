@@ -2,6 +2,7 @@ import * as React from "react";
 import { View, Text, type ViewProps } from "react-native";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utilities/cn";
+import { isTextContent } from "../../utilities/is-text";
 
 export const badgeVariants = cva(
   "inline-flex flex-row items-center justify-center rounded-full self-start",
@@ -73,7 +74,7 @@ export function Badge({
       className={cn(badgeVariants({ variant, size }), className)}
       {...props}
     >
-      {typeof children === "string" || typeof children === "number" ? (
+      {isTextContent(children) ? (
         <Text
           className={cn(badgeTextVariants({ variant, size }), textClassName)}
         >

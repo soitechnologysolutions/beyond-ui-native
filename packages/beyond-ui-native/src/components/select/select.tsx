@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utilities/cn";
+import { isTextContent } from "../../utilities/is-text";
 import { Text } from "../text/text";
 
 const selectTriggerVariants = cva(
@@ -358,7 +359,7 @@ export const SelectItem: React.FC<SelectItemProps> = ({
         className
       )}
     >
-      {typeof children === "string" ? (
+      {isTextContent(children) ? (
         <Text
           className={cn(
             "text-base",

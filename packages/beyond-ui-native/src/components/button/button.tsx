@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utilities/cn";
+import { isTextContent } from "../../utilities/is-text";
 
 export const buttonVariants = cva(
   "flex-row items-center justify-center rounded-xl transition-colors",
@@ -130,7 +131,7 @@ export const Button = React.forwardRef<View, ButtonProps>(function Button(
           <View className="mr-2">{leftIcon}</View>
         ) : null}
 
-        {typeof children === "string" || typeof children === "number" ? (
+        {isTextContent(children) ? (
           <Text
             className={cn(
               buttonTextVariants({ variant, size }),

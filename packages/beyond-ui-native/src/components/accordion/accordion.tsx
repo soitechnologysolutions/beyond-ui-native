@@ -7,6 +7,7 @@ import {
   type PressableProps,
 } from "react-native";
 import { cn } from "../../utilities/cn";
+import { isTextContent } from "../../utilities/is-text";
 import { Text } from "../text/text";
 
 type AccordionType = "single" | "multiple";
@@ -199,7 +200,7 @@ export const AccordionTrigger = React.forwardRef<View, AccordionTriggerProps>(
         {...props}
       >
         <View className="flex-1 pr-2">
-          {typeof children === "string" ? (
+          {isTextContent(children) ? (
             <Text className="text-base font-medium text-neutral-900 dark:text-neutral-100">{children}</Text>
           ) : (
             children
@@ -233,7 +234,7 @@ export const AccordionContent = React.forwardRef<View, AccordionContentProps>(
         className={cn("pt-1 pb-3 px-1", className)}
         {...props}
       >
-        {typeof children === "string" ? (
+        {isTextContent(children) ? (
           <Text className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">{children}</Text>
         ) : (
           children
