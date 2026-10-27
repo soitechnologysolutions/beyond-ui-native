@@ -71,7 +71,7 @@ export const TabsList = React.forwardRef<View, TabsListProps>(function TabsList(
   return (
     <View
       ref={ref}
-      role="tablist"
+      accessibilityRole="radiogroup"
       className={cn(
         "flex-row items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800 p-1",
         className
@@ -106,8 +106,7 @@ export const TabsTrigger = React.forwardRef<
   return (
     <Pressable
       ref={ref}
-      role="tab"
-      accessibilityRole="tab"
+      accessibilityRole="button"
       accessibilityState={{ selected: isSelected, disabled: !!disabled }}
       disabled={disabled}
       onPress={handlePress}
