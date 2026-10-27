@@ -5,6 +5,35 @@ import { PortalHost } from "@rn-primitives/portal";
 import { ToastContext, ToastItem, ToastContextValue } from "../components/toast/types";
 import { ToastContainer } from "../components/toast/toast";
 
+if (typeof __DEV__ !== "undefined" && __DEV__) {
+  try {
+    const { LogBox } = require("react-native");
+    LogBox?.ignoreLogs?.([
+      "You are setting the style `{ shadowOffset: ... }` as a prop",
+      "You are setting the style",
+    ]);
+
+    if (!Boolean((console.error as any)?.__beyond_ui_filtered)) {
+      const originalError = console.error;
+      const filteredError = (...args: any[]) => {
+        const fullMessage = args
+          .map((arg) => (typeof arg === "string" ? arg : ""))
+          .join(" ");
+
+        if (
+          fullMessage.includes("shadowOffset") ||
+          fullMessage.includes("You are setting the style")
+        ) {
+          return;
+        }
+        originalError(...args);
+      };
+      (filteredError as any).__beyond_ui_filtered = true;
+      console.error = filteredError;
+    }
+  } catch (_) {}
+}
+
 export type ColorScheme = "light" | "dark" | "system";
 
 export interface BeyondUIContextValue {

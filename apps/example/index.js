@@ -1,18 +1,22 @@
 import "./global.css";
 import { LogBox } from "react-native";
 import { registerRootComponent } from "expo";
-import App from "./App";
 
 LogBox.ignoreLogs([
   "You are setting the style `{ shadowOffset: ... }` as a prop",
+  "You are setting the style",
   "[Reanimated]",
 ]);
 
 const originalConsoleError = console.error;
 console.error = (...args) => {
+  const fullMessage = args
+    .map((arg) => (typeof arg === "string" ? arg : ""))
+    .join(" ");
+
   if (
-    typeof args[0] === "string" &&
-    args[0].includes("shadowOffset")
+    fullMessage.includes("shadowOffset") ||
+    fullMessage.includes("You are setting the style")
   ) {
     return;
   }
@@ -26,5 +30,7 @@ try {
     strict: false,
   });
 } catch (_) {}
+
+import App from "./App";
 
 registerRootComponent(App);
