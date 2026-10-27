@@ -26,6 +26,9 @@ export * from "./components/accordion";
 export * from "./components/bottom-sheet";
 export * from "./components/select";
 export * from "./components/data-table";
+export * from "./components/modal";
+export * from "./components/night-mode-switch";
+export * from "./components/dashboard-layout";
 
 // Screen Templates
 export * from "./templates";
