@@ -62,12 +62,12 @@ export const SettingsTemplate: React.FC<SettingsTemplateProps> = ({
     <ScrollView
       {...props}
       style={[{ flex: 1 }, (props as any).style]}
-      className={cn("flex-1 bg-background", className)}
+      className={cn("flex-1 bg-neutral-50 dark:bg-neutral-950", className)}
       contentContainerStyle={{ paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}
     >
       <View className="px-6 pt-6 gap-6">
-        <Heading level={2} className="text-2xl font-bold text-foreground">
+        <Heading level={2} className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
           Settings & Profile
         </Heading>
 
@@ -79,14 +79,14 @@ export const SettingsTemplate: React.FC<SettingsTemplateProps> = ({
           </Avatar>
           <View className="flex-1">
             <View className="flex-row items-center gap-2">
-              <Text className="text-base font-bold text-foreground">{user.name}</Text>
+              <Text className="text-base font-bold text-neutral-900 dark:text-neutral-100">{user.name}</Text>
               {user.plan && (
                 <Badge variant="primary" size="sm">
                   {user.plan}
                 </Badge>
               )}
             </View>
-            <Text className="text-xs text-muted">{user.email}</Text>
+            <Text className="text-xs text-neutral-500 dark:text-neutral-400">{user.email}</Text>
           </View>
           {onEditProfile && (
             <Button variant="outline" size="sm" onPress={onEditProfile}>
@@ -97,16 +97,16 @@ export const SettingsTemplate: React.FC<SettingsTemplateProps> = ({
 
         {/* Preferences Section */}
         <View className="gap-2">
-          <Text className="text-xs font-bold text-muted uppercase tracking-wider px-1">
+          <Text className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-1">
             Preferences
           </Text>
-          <Card className="divide-y divide-border/50">
+          <Card className="divide-y divide-neutral-200 dark:divide-neutral-800">
             <View className="p-4 flex-row items-center justify-between">
               <View className="pr-4 flex-1">
-                <Text className="text-sm font-semibold text-foreground">
+                <Text className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                   Push Notifications
                 </Text>
-                <Text className="text-xs text-muted">
+                <Text className="text-xs text-neutral-500 dark:text-neutral-400">
                   Receive real-time alerts on your mobile device
                 </Text>
               </View>
@@ -118,10 +118,10 @@ export const SettingsTemplate: React.FC<SettingsTemplateProps> = ({
 
             <View className="p-4 flex-row items-center justify-between">
               <View className="pr-4 flex-1">
-                <Text className="text-sm font-semibold text-foreground">
+                <Text className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                   Email Notifications
                 </Text>
-                <Text className="text-xs text-muted">
+                <Text className="text-xs text-neutral-500 dark:text-neutral-400">
                   Weekly digests and activity summaries
                 </Text>
               </View>
@@ -133,8 +133,8 @@ export const SettingsTemplate: React.FC<SettingsTemplateProps> = ({
 
             <View className="p-4 flex-row items-center justify-between">
               <View className="pr-4 flex-1">
-                <Text className="text-sm font-semibold text-foreground">Dark Theme</Text>
-                <Text className="text-xs text-muted">
+                <Text className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Dark Theme</Text>
+                <Text className="text-xs text-neutral-500 dark:text-neutral-400">
                   Enable high contrast dark mode appearance
                 </Text>
               </View>
@@ -143,10 +143,10 @@ export const SettingsTemplate: React.FC<SettingsTemplateProps> = ({
 
             <View className="p-4 flex-row items-center justify-between">
               <View className="pr-4 flex-1">
-                <Text className="text-sm font-semibold text-foreground">
+                <Text className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                   Biometric Login
                 </Text>
-                <Text className="text-xs text-muted">
+                <Text className="text-xs text-neutral-500 dark:text-neutral-400">
                   Use Face ID or fingerprint to authenticate
                 </Text>
               </View>
@@ -160,43 +160,43 @@ export const SettingsTemplate: React.FC<SettingsTemplateProps> = ({
 
         {/* Security & Account Links */}
         <View className="gap-2">
-          <Text className="text-xs font-bold text-muted uppercase tracking-wider px-1">
+          <Text className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-1">
             Account & Security
           </Text>
-          <Card className="divide-y divide-border/50">
+          <Card className="divide-y divide-neutral-200 dark:divide-neutral-800">
             {onChangePassword && (
               <Pressable
                 onPress={onChangePassword}
-                className="p-4 flex-row items-center justify-between active:bg-muted/10"
+                className="p-4 flex-row items-center justify-between active:bg-neutral-100 dark:active:bg-neutral-800"
               >
-                <Text className="text-sm font-semibold text-foreground">
+                <Text className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                   Change Password
                 </Text>
-                <Text className="text-muted text-xs">›</Text>
+                <Text className="text-neutral-400 dark:text-neutral-500 text-xs">›</Text>
               </Pressable>
             )}
 
             {onViewTerms && (
               <Pressable
                 onPress={onViewTerms}
-                className="p-4 flex-row items-center justify-between active:bg-muted/10"
+                className="p-4 flex-row items-center justify-between active:bg-neutral-100 dark:active:bg-neutral-800"
               >
-                <Text className="text-sm font-semibold text-foreground">
+                <Text className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                   Terms of Service
                 </Text>
-                <Text className="text-muted text-xs">›</Text>
+                <Text className="text-neutral-400 dark:text-neutral-500 text-xs">›</Text>
               </Pressable>
             )}
 
             {onViewPrivacy && (
               <Pressable
                 onPress={onViewPrivacy}
-                className="p-4 flex-row items-center justify-between active:bg-muted/10"
+                className="p-4 flex-row items-center justify-between active:bg-neutral-100 dark:active:bg-neutral-800"
               >
-                <Text className="text-sm font-semibold text-foreground">
+                <Text className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                   Privacy Policy
                 </Text>
-                <Text className="text-muted text-xs">›</Text>
+                <Text className="text-neutral-400 dark:text-neutral-500 text-xs">›</Text>
               </Pressable>
             )}
           </Card>

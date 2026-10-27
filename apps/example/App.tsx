@@ -519,6 +519,8 @@ function ShowcaseApp() {
               email: "mark@beyondsoftwares.com",
               plan: "Enterprise",
             }}
+            isDarkMode={colorScheme === "dark"}
+            onToggleDarkMode={() => toggleColorScheme()}
             onLogout={() => alert("Logged out")}
             onDeleteAccount={() => alert("Delete account tapped")}
           />

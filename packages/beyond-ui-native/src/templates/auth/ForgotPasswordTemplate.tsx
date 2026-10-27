@@ -50,7 +50,7 @@ export const ForgotPasswordTemplate: React.FC<ForgotPasswordTemplateProps> = ({
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
-      className={cn("flex-1 bg-background", className)}
+      className={cn("flex-1 bg-neutral-50 dark:bg-neutral-950", className)}
     >
       <ScrollView
         style={{ flex: 1 }}
@@ -61,10 +61,10 @@ export const ForgotPasswordTemplate: React.FC<ForgotPasswordTemplateProps> = ({
       >
         <View className="w-full max-w-md mx-auto gap-6">
           <View className="items-center gap-2">
-            <Heading level={2} className="text-3xl font-extrabold text-foreground text-center">
+            <Heading level={2} className="text-3xl font-extrabold text-neutral-900 dark:text-neutral-50 text-center">
               {title}
             </Heading>
-            <Text className="text-muted text-center text-base">
+            <Text className="text-neutral-500 dark:text-neutral-400 text-center text-base">
               {subtitle}
             </Text>
           </View>
@@ -117,7 +117,7 @@ export const ForgotPasswordTemplate: React.FC<ForgotPasswordTemplateProps> = ({
               {onBackToSignIn && (
                 <View className="flex-row justify-center items-center gap-1.5 pt-2">
                   <Pressable onPress={onBackToSignIn}>
-                    <Text className="text-sm font-semibold text-primary">
+                    <Text className="text-sm font-semibold text-primary-600 dark:text-primary-400">
                       Back to Sign In
                     </Text>
                   </Pressable>

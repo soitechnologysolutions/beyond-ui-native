@@ -148,7 +148,7 @@ export const AccordionItem = React.forwardRef<View, AccordionItemProps>(
       <AccordionItemContext.Provider value={{ value, isOpen }}>
         <View
           ref={ref}
-          className={cn("border-b border-border py-1", className)}
+          className={cn("border-b border-neutral-200 dark:border-neutral-800 py-1", className)}
           {...props}
         >
           {children}
@@ -200,13 +200,13 @@ export const AccordionTrigger = React.forwardRef<View, AccordionTriggerProps>(
       >
         <View className="flex-1 pr-2">
           {typeof children === "string" ? (
-            <Text className="text-base font-medium text-foreground">{children}</Text>
+            <Text className="text-base font-medium text-neutral-900 dark:text-neutral-100">{children}</Text>
           ) : (
             children
           )}
         </View>
         <Animated.View style={{ transform: [{ rotate }] }}>
-          <Text className="text-muted text-base font-semibold">▼</Text>
+          <Text className="text-neutral-500 dark:text-neutral-400 text-base font-semibold">▼</Text>
         </Animated.View>
       </Pressable>
     );
@@ -230,11 +230,11 @@ export const AccordionContent = React.forwardRef<View, AccordionContentProps>(
     return (
       <View
         ref={ref}
-        className={cn("pt-1 pb-3 px-1 text-sm text-muted", className)}
+        className={cn("pt-1 pb-3 px-1", className)}
         {...props}
       >
         {typeof children === "string" ? (
-          <Text className="text-sm text-muted leading-relaxed">{children}</Text>
+          <Text className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">{children}</Text>
         ) : (
           children
         )}

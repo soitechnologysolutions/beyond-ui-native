@@ -8,6 +8,17 @@ LogBox.ignoreLogs([
   "[Reanimated]",
 ]);
 
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  if (
+    typeof args[0] === "string" &&
+    args[0].includes("shadowOffset")
+  ) {
+    return;
+  }
+  originalConsoleError(...args);
+};
+
 try {
   const { configureReanimatedLogger, ReanimatedLogLevel } = require("react-native-reanimated");
   configureReanimatedLogger({

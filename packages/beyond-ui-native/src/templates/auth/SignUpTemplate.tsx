@@ -88,7 +88,7 @@ export const SignUpTemplate: React.FC<SignUpTemplateProps> = ({
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
-      className={cn("flex-1 bg-background", className)}
+      className={cn("flex-1 bg-neutral-50 dark:bg-neutral-950", className)}
     >
       <ScrollView
         style={{ flex: 1 }}
@@ -101,10 +101,10 @@ export const SignUpTemplate: React.FC<SignUpTemplateProps> = ({
           {/* Header */}
           <View className="items-center gap-2">
             {logo && <View className="mb-2">{logo}</View>}
-            <Heading level={2} className="text-3xl font-extrabold text-foreground text-center">
+            <Heading level={2} className="text-3xl font-extrabold text-neutral-900 dark:text-neutral-50 text-center">
               {title}
             </Heading>
-            <Text className="text-muted text-center text-base">
+            <Text className="text-neutral-500 dark:text-neutral-400 text-center text-base">
               {subtitle}
             </Text>
           </View>
@@ -164,7 +164,7 @@ export const SignUpTemplate: React.FC<SignUpTemplateProps> = ({
                     if (termsError) setTermsError(undefined);
                   }}
                 />
-                <Text className="text-sm text-foreground flex-1">
+                <Text className="text-sm text-neutral-900 dark:text-neutral-100 flex-1">
                   I agree to the Terms of Service & Privacy Policy
                 </Text>
               </View>
@@ -190,7 +190,7 @@ export const SignUpTemplate: React.FC<SignUpTemplateProps> = ({
             <View className="gap-4">
               <View className="flex-row items-center gap-3">
                 <Separator className="flex-1" />
-                <Text className="text-xs text-muted uppercase">or continue with</Text>
+                <Text className="text-xs text-neutral-500 dark:text-neutral-400 uppercase">or continue with</Text>
                 <Separator className="flex-1" />
               </View>
 
@@ -220,9 +220,9 @@ export const SignUpTemplate: React.FC<SignUpTemplateProps> = ({
           {/* Back to SignIn */}
           {onSignInPress && (
             <View className="flex-row justify-center items-center gap-1.5 pt-2">
-              <Text className="text-sm text-muted">Already have an account?</Text>
+              <Text className="text-sm text-neutral-500 dark:text-neutral-400">Already have an account?</Text>
               <Pressable onPress={onSignInPress}>
-                <Text className="text-sm font-bold text-primary">Sign In</Text>
+                <Text className="text-sm font-bold text-primary-600 dark:text-primary-400">Sign In</Text>
               </Pressable>
             </View>
           )}
