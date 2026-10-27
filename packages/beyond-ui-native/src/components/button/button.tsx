@@ -16,6 +16,7 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
+        default: "bg-primary-600 active:bg-primary-700 dark:bg-primary-600 dark:active:bg-primary-700",
         primary: "bg-primary-600 active:bg-primary-700 dark:bg-primary-600 dark:active:bg-primary-700",
         secondary: "bg-secondary-600 active:bg-secondary-700 dark:bg-secondary-600 dark:active:bg-secondary-700",
         danger: "bg-danger-600 active:bg-danger-700 dark:bg-danger-600 dark:active:bg-danger-700",
@@ -44,6 +45,7 @@ export const buttonVariants = cva(
 export const buttonTextVariants = cva("font-semibold text-center select-none", {
   variants: {
     variant: {
+      default: "text-white",
       primary: "text-white",
       secondary: "text-white",
       danger: "text-white",

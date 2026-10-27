@@ -9,6 +9,7 @@ export const badgeVariants = cva(
   {
     variants: {
       variant: {
+        default: "bg-primary-600 dark:bg-primary-500",
         primary: "bg-primary-600 dark:bg-primary-500",
         secondary: "bg-secondary-600 dark:bg-secondary-500",
         danger: "bg-danger-600 dark:bg-danger-500",
@@ -33,6 +34,7 @@ export const badgeVariants = cva(
 export const badgeTextVariants = cva("font-semibold text-center", {
   variants: {
     variant: {
+      default: "text-white",
       primary: "text-white",
       secondary: "text-white",
       danger: "text-white",

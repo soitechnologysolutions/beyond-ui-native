@@ -1,6 +1,6 @@
 {
   "name": "@beyondcorp/beyond-ui-native",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Accessible, NativeWind-first React Native component library for Beyond Softwares",
   "author": "Beyond Corp",
   "license": "MIT",
