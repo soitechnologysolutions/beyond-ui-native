@@ -51,14 +51,19 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   const isControlled = controlledOpen !== undefined;
   const isOpen = isControlled ? controlledOpen : uncontrolledOpen;
 
+  const onOpenChangeRef = React.useRef(onOpenChange);
+  React.useEffect(() => {
+    onOpenChangeRef.current = onOpenChange;
+  }, [onOpenChange]);
+
   const setOpen = React.useCallback(
     (nextOpen: boolean) => {
       if (!isControlled) {
         setUncontrolledOpen(nextOpen);
       }
-      onOpenChange?.(nextOpen);
+      onOpenChangeRef.current?.(nextOpen);
     },
-    [isControlled, onOpenChange]
+    [isControlled]
   );
 
   const closeSheet = React.useCallback(() => {
@@ -85,22 +90,30 @@ export const BottomSheetTrigger = React.forwardRef<View, BottomSheetTriggerProps
     const { setOpen } = useBottomSheetContext();
 
     const handlePress = (e: any) => {
-      setOpen(true);
-      onPress?.(e);
+      try {
+        setOpen(true);
+      } finally {
+        onPress?.(e);
+      }
     };
 
     if (asChild && React.isValidElement(children)) {
+      const childProps = (children as React.ReactElement<any>).props || {};
       return React.cloneElement(children as React.ReactElement<any>, {
-        ...(ref != null ? { ref } : {}),
+        ...props,
+        ...childProps,
         onPress: (e: any) => {
-          handlePress(e);
-          (children.props as any)?.onPress?.(e);
+          try {
+            childProps.onPress?.(e);
+          } finally {
+            handlePress(e);
+          }
         },
       });
     }
 
     return (
-      <Pressable ref={ref} onPress={handlePress} {...props}>
+      <Pressable ref={ref} onPress={handlePress} role="button" {...props}>
         {children}
       </Pressable>
     );
@@ -121,6 +134,9 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
     const { width: windowWidth, height: windowHeight } = useWindowDimensions();
     const [modalVisible, setModalVisible] = React.useState(open);
 
+    const windowHeightRef = React.useRef(windowHeight);
+    windowHeightRef.current = windowHeight;
+
     const translateY = React.useRef(new Animated.Value(windowHeight)).current;
     const backdropOpacity = React.useRef(new Animated.Value(0)).current;
     const useNativeDriver = Platform.OS !== "web";
@@ -135,10 +151,11 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
       }
 
       let timer: ReturnType<typeof setTimeout> | null = null;
+      const targetHeight = windowHeightRef.current || 800;
 
       if (open) {
         setModalVisible(true);
-        translateY.setValue(windowHeight);
+        translateY.setValue(targetHeight);
         Animated.parallel([
           Animated.spring(translateY, {
             toValue: 0,
@@ -154,7 +171,7 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
       } else {
         Animated.parallel([
           Animated.timing(translateY, {
-            toValue: windowHeight,
+            toValue: targetHeight,
             duration: 200,
             useNativeDriver,
           }),
@@ -176,7 +193,7 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
       return () => {
         if (timer) clearTimeout(timer);
       };
-    }, [open, translateY, backdropOpacity, windowHeight, useNativeDriver]);
+    }, [open, translateY, backdropOpacity, useNativeDriver]);
 
     // PanResponder for drag down to dismiss
     const panResponder = React.useRef(
@@ -384,25 +401,37 @@ export interface BottomSheetCloseProps extends PressableProps {
 
 export const BottomSheetClose = React.forwardRef<View, BottomSheetCloseProps>(
   ({ asChild, children, onPress, ...props }, ref) => {
-    const { closeSheet } = useBottomSheetContext();
+    const { closeSheet, setOpen } = useBottomSheetContext();
 
     const handlePress = (e: any) => {
-      closeSheet();
-      onPress?.(e);
+      try {
+        if (closeSheet) {
+          closeSheet();
+        } else {
+          setOpen(false);
+        }
+      } finally {
+        onPress?.(e);
+      }
     };
 
     if (asChild && React.isValidElement(children)) {
+      const childProps = (children as React.ReactElement<any>).props || {};
       return React.cloneElement(children as React.ReactElement<any>, {
-        ...(ref != null ? { ref } : {}),
+        ...props,
+        ...childProps,
         onPress: (e: any) => {
-          handlePress(e);
-          (children.props as any)?.onPress?.(e);
+          try {
+            childProps.onPress?.(e);
+          } finally {
+            handlePress(e);
+          }
         },
       });
     }
 
     return (
-      <Pressable ref={ref} onPress={handlePress} {...props}>
+      <Pressable ref={ref} onPress={handlePress} role="button" {...props}>
         {children}
       </Pressable>
     );

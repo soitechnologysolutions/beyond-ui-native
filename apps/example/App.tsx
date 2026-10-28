@@ -191,9 +191,12 @@ function ComponentsShowcase() {
             <BottomSheetFooter>
               <BottomSheetClose asChild>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
-                  onPress={() => setIsSheetOpen(false)}
+                  onPress={() => {
+                    setIsSheetOpen(false);
+                    toast.info("Bottom sheet dismissed.");
+                  }}
                 >
                   Cancel
                 </Button>
@@ -378,9 +381,12 @@ function ComponentsShowcase() {
             <DialogFooter>
               <DialogClose asChild>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
-                  onPress={() => setIsDialogOpen(false)}
+                  onPress={() => {
+                    setIsDialogOpen(false);
+                    toast.info("Dialog cancelled.");
+                  }}
                 >
                   Cancel
                 </Button>

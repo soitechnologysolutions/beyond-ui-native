@@ -49,14 +49,19 @@ export function Dialog({
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : uncontrolledOpen;
 
+  const onOpenChangeRef = React.useRef(onOpenChange);
+  React.useEffect(() => {
+    onOpenChangeRef.current = onOpenChange;
+  }, [onOpenChange]);
+
   const handleOpenChange = React.useCallback(
     (nextOpen: boolean) => {
       if (!isControlled) {
         setUncontrolledOpen(nextOpen);
       }
-      onOpenChange?.(nextOpen);
+      onOpenChangeRef.current?.(nextOpen);
     },
-    [isControlled, onOpenChange]
+    [isControlled]
   );
 
   const close = React.useCallback(() => {
@@ -82,16 +87,24 @@ export const DialogTrigger = React.forwardRef<View, DialogTriggerProps>(
     const { open, onOpenChange } = useDialogContext();
 
     const handlePress = (e: GestureResponderEvent) => {
-      onOpenChange(!open);
-      onPress?.(e);
+      try {
+        onOpenChange(!open);
+      } finally {
+        onPress?.(e);
+      }
     };
 
     if (asChild && React.isValidElement(children)) {
+      const childProps = (children as React.ReactElement<any>).props || {};
       return React.cloneElement(children as React.ReactElement<any>, {
-        ...(ref != null ? { ref } : {}),
+        ...props,
+        ...childProps,
         onPress: (e: GestureResponderEvent) => {
-          handlePress(e);
-          (children.props as any)?.onPress?.(e);
+          try {
+            childProps.onPress?.(e);
+          } finally {
+            handlePress(e);
+          }
         },
       });
     }
@@ -322,20 +335,28 @@ export const DialogClose = React.forwardRef<View, DialogCloseProps>(
     const { onOpenChange, close } = useDialogContext();
 
     const handlePress = (e: GestureResponderEvent) => {
-      if (close) {
-        close();
-      } else {
-        onOpenChange(false);
+      try {
+        if (close) {
+          close();
+        } else {
+          onOpenChange(false);
+        }
+      } finally {
+        onPress?.(e);
       }
-      onPress?.(e);
     };
 
     if (asChild && React.isValidElement(children)) {
+      const childProps = (children as React.ReactElement<any>).props || {};
       return React.cloneElement(children as React.ReactElement<any>, {
-        ...(ref != null ? { ref } : {}),
+        ...props,
+        ...childProps,
         onPress: (e: GestureResponderEvent) => {
-          handlePress(e);
-          (children.props as any)?.onPress?.(e);
+          try {
+            childProps.onPress?.(e);
+          } finally {
+            handlePress(e);
+          }
         },
       });
     }
