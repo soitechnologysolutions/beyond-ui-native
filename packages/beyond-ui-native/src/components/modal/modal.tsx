@@ -7,6 +7,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Dimensions,
   ScrollView,
   type ViewProps,
   type TextProps,
@@ -73,6 +74,14 @@ export function Modal({
   overlayClassName,
 }: ModalProps) {
   const isOpen = (controlledOpen !== undefined ? controlledOpen : visible) ?? false;
+  const [dimensions, setDimensions] = React.useState(() => Dimensions.get("window"));
+
+  React.useEffect(() => {
+    const sub = Dimensions.addEventListener("change", ({ window }) => {
+      setDimensions(window);
+    });
+    return () => sub?.remove();
+  }, []);
 
   const handleClose = React.useCallback(() => {
     onOpenChange?.(false);
@@ -80,6 +89,17 @@ export function Modal({
   }, [onOpenChange, onRequestClose]);
 
   if (!isOpen) return null;
+
+  const sizeWidthMap = {
+    sm: 320,
+    md: 448,
+    lg: 512,
+    xl: 576,
+    full: dimensions.width - 32,
+  };
+  const targetMaxWidth = sizeWidthMap[size || "md"] || 448;
+  const maxWidth = Math.min(targetMaxWidth, Math.max(0, dimensions.width - 32));
+  const maxHeight = Math.round(dimensions.height * 0.85);
 
   return (
     <ModalContext.Provider value={{ open: isOpen, onOpenChange: (o) => !o && handleClose() }}>
@@ -92,11 +112,14 @@ export function Modal({
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
-          style={StyleSheet.absoluteFill}
+          style={{ flex: 1 }}
         >
           {/* Backdrop Overlay */}
           <Pressable
-            style={StyleSheet.absoluteFill}
+            style={[
+              StyleSheet.absoluteFillObject,
+              { backgroundColor: "rgba(0, 0, 0, 0.6)" },
+            ]}
             className={cn("bg-black/60", overlayClassName)}
             onPress={closeOnOverlayPress ? handleClose : undefined}
             accessibilityRole="button"
@@ -105,14 +128,26 @@ export function Modal({
 
           {/* Modal Container */}
           <View
-            pointerEvents="box-none"
-            style={StyleSheet.absoluteFill}
-            className="items-center justify-center p-4 z-50"
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              paddingHorizontal: 16,
+              paddingVertical: 24,
+            }}
+            className="flex-1 items-center justify-center p-4 z-50"
           >
             <View
               role="dialog"
               aria-modal={true}
-              className={cn(modalVariants({ size }), className)}
+              style={{
+                width: "100%",
+                maxWidth,
+                maxHeight,
+                zIndex: 10,
+                elevation: 10,
+              }}
+              className={cn(modalVariants({ size }), "overflow-hidden", className)}
             >
               {showCloseButton && (
                 <Pressable

@@ -5,6 +5,8 @@ import {
   Text,
   Pressable,
   StyleSheet,
+  Dimensions,
+  Platform,
   type ViewProps,
   type TextProps,
   type PressableProps,
@@ -79,7 +81,7 @@ export const DialogTrigger = React.forwardRef<View, DialogTriggerProps>(
 
     if (asChild && React.isValidElement(children)) {
       return React.cloneElement(children as React.ReactElement<any>, {
-        ref,
+        ...(ref != null ? { ref } : {}),
         onPress: (e: GestureResponderEvent) => {
           (children.props as any)?.onPress?.(e);
           handlePress(e);
@@ -122,20 +124,24 @@ export function DialogPortal({ children, forceMount }: DialogPortalProps) {
 }
 DialogPortal.displayName = "DialogPortal";
 
-export interface DialogOverlayProps extends ViewProps {
+export interface DialogOverlayProps extends PressableProps {
   className?: string;
   closeOnPress?: boolean;
 }
 
 export const DialogOverlay = React.forwardRef<View, DialogOverlayProps>(
-  function DialogOverlay({ className, closeOnPress = true, ...props }, ref) {
+  function DialogOverlay({ className, closeOnPress = true, style, ...props }, ref) {
     const { onOpenChange } = useDialogContext();
 
     return (
       <Pressable
         ref={ref}
-        style={StyleSheet.absoluteFill}
-        className={cn("z-50 bg-black/60", className)}
+        style={[
+          StyleSheet.absoluteFillObject,
+          { backgroundColor: "rgba(0, 0, 0, 0.6)" },
+          style as any,
+        ]}
+        className={cn("bg-black/60", className)}
         onPress={() => {
           if (closeOnPress) {
             onOpenChange(false);
@@ -151,25 +157,59 @@ DialogOverlay.displayName = "DialogOverlay";
 export interface DialogContentProps extends ViewProps {
   className?: string;
   overlayClassName?: string;
+  closeOnOverlayPress?: boolean;
   children: React.ReactNode;
 }
 
 export const DialogContent = React.forwardRef<View, DialogContentProps>(
-  function DialogContent({ className, overlayClassName, children, ...props }, ref) {
+  function DialogContent(
+    { className, overlayClassName, closeOnOverlayPress = true, children, style, ...props },
+    ref
+  ) {
+    const [dimensions, setDimensions] = React.useState(() => Dimensions.get("window"));
+
+    React.useEffect(() => {
+      const sub = Dimensions.addEventListener("change", ({ window }) => {
+        setDimensions(window);
+      });
+      return () => sub?.remove();
+    }, []);
+
+    const maxHeight = Math.round(dimensions.height * 0.85);
+    const maxWidth = Math.min(512, Math.max(0, Math.round(dimensions.width - 32)));
+
     return (
       <DialogPortal>
         <View
-          pointerEvents="box-none"
-          style={StyleSheet.absoluteFill}
-          className="z-50 items-center justify-center p-4"
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingHorizontal: 16,
+            paddingVertical: 24,
+          }}
+          className="flex-1 items-center justify-center p-4"
         >
-          <DialogOverlay className={overlayClassName} />
+          <DialogOverlay
+            className={overlayClassName}
+            closeOnPress={closeOnOverlayPress}
+          />
           <View
             ref={ref}
             role="dialog"
             aria-modal={true}
+            style={[
+              {
+                width: "100%",
+                maxWidth,
+                maxHeight,
+                zIndex: 10,
+                elevation: 10,
+              },
+              style,
+            ]}
             className={cn(
-              "z-50 w-full max-w-lg rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-2xl",
+              "w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-2xl overflow-hidden",
               className
             )}
             {...props}
@@ -189,7 +229,7 @@ export function DialogHeader({
 }: ViewProps & { className?: string }) {
   return (
     <View
-      className={cn("flex-col space-y-2 text-center sm:text-left", className)}
+      className={cn("flex-col gap-2 text-center sm:text-left", className)}
       {...props}
     />
   );
@@ -236,7 +276,7 @@ export function DialogFooter({
 }: ViewProps & { className?: string }) {
   return (
     <View
-      className={cn("flex-row justify-end space-x-2 mt-6", className)}
+      className={cn("flex-row items-center justify-end gap-3 mt-6", className)}
       {...props}
     />
   );
@@ -260,7 +300,7 @@ export const DialogClose = React.forwardRef<View, DialogCloseProps>(
 
     if (asChild && React.isValidElement(children)) {
       return React.cloneElement(children as React.ReactElement<any>, {
-        ref,
+        ...(ref != null ? { ref } : {}),
         onPress: (e: GestureResponderEvent) => {
           (children.props as any)?.onPress?.(e);
           handlePress(e);

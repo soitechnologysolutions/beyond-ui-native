@@ -5,6 +5,8 @@ import {
   Pressable,
   ScrollView,
   TextInput,
+  StyleSheet,
+  Dimensions,
   type ViewProps,
 } from "react-native";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -176,9 +178,23 @@ export const Select: React.FC<SelectProps> = ({
             onRequestClose={() => setOpen(false)}
             statusBarTranslucent
           >
-            <View className="flex-1 justify-end bg-black/60">
-              <Pressable className="flex-1" onPress={() => setOpen(false)} />
-              <View className="w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 p-6 max-h-[75%]">
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "flex-end",
+                backgroundColor: "rgba(0, 0, 0, 0.6)",
+              }}
+              className="flex-1 justify-end bg-black/60"
+            >
+              <Pressable style={StyleSheet.absoluteFillObject} onPress={() => setOpen(false)} />
+              <View
+                style={{
+                  maxHeight: Math.round(Dimensions.get("window").height * 0.75),
+                  zIndex: 10,
+                  elevation: 10,
+                }}
+                className="w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 p-6 overflow-hidden"
+              >
                 <View className="flex-row items-center justify-between pb-4 border-b border-neutral-200 dark:border-neutral-800 mb-3">
                   <Text className="text-lg font-bold text-neutral-900 dark:text-neutral-50">
                     {label || placeholder}
@@ -319,9 +335,23 @@ export const SelectContent: React.FC<SelectContentProps> = ({ title, children })
       onRequestClose={() => setOpen(false)}
       statusBarTranslucent
     >
-      <View className="flex-1 justify-end bg-black/60">
-        <Pressable className="flex-1" onPress={() => setOpen(false)} />
-        <View className="w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 p-6 max-h-[75%]">
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "flex-end",
+          backgroundColor: "rgba(0, 0, 0, 0.6)",
+        }}
+        className="flex-1 justify-end bg-black/60"
+      >
+        <Pressable style={StyleSheet.absoluteFillObject} onPress={() => setOpen(false)} />
+        <View
+          style={{
+            maxHeight: Math.round(Dimensions.get("window").height * 0.75),
+            zIndex: 10,
+            elevation: 10,
+          }}
+          className="w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 p-6 overflow-hidden"
+        >
           <View className="flex-row items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-800 mb-3">
             <Text className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{title || "Select"}</Text>
             <Pressable onPress={() => setOpen(false)} className="p-1">

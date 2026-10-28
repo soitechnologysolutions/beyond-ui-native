@@ -6,6 +6,8 @@ import {
   Animated,
   PanResponder,
   Dimensions,
+  Platform,
+  StyleSheet,
   type ViewProps,
   type PressableProps,
 } from "react-native";
@@ -86,8 +88,11 @@ export const BottomSheetTrigger = React.forwardRef<View, BottomSheetTriggerProps
 
     if (asChild && React.isValidElement(children)) {
       return React.cloneElement(children as React.ReactElement<any>, {
-        ref,
-        onPress: handlePress,
+        ...(ref != null ? { ref } : {}),
+        onPress: (e: any) => {
+          (children.props as any)?.onPress?.(e);
+          handlePress(e);
+        },
       });
     }
 
@@ -108,25 +113,36 @@ export interface BottomSheetContentProps extends ViewProps {
 }
 
 export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps>(
-  ({ className, children, ...props }, ref) => {
+  ({ className, children, style, ...props }, ref) => {
     const { open, closeSheet } = useBottomSheetContext();
-    const screenHeight = Dimensions.get("window").height;
+    const [dimensions, setDimensions] = React.useState(() => Dimensions.get("window"));
+    const [modalVisible, setModalVisible] = React.useState(open);
 
+    React.useEffect(() => {
+      const sub = Dimensions.addEventListener("change", ({ window }) => {
+        setDimensions(window);
+      });
+      return () => sub?.remove();
+    }, []);
+
+    const screenHeight = dimensions.height;
     const translateY = React.useRef(new Animated.Value(screenHeight)).current;
     const backdropOpacity = React.useRef(new Animated.Value(0)).current;
+    const useNativeDriver = Platform.OS !== "web";
 
     React.useEffect(() => {
       if (open) {
+        setModalVisible(true);
         Animated.parallel([
           Animated.spring(translateY, {
             toValue: 0,
-            useNativeDriver: true,
+            useNativeDriver,
             bounciness: 4,
           }),
           Animated.timing(backdropOpacity, {
             toValue: 1,
             duration: 250,
-            useNativeDriver: true,
+            useNativeDriver,
           }),
         ]).start();
       } else {
@@ -134,16 +150,20 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
           Animated.timing(translateY, {
             toValue: screenHeight,
             duration: 200,
-            useNativeDriver: true,
+            useNativeDriver,
           }),
           Animated.timing(backdropOpacity, {
             toValue: 0,
             duration: 200,
-            useNativeDriver: true,
+            useNativeDriver,
           }),
-        ]).start();
+        ]).start(({ finished }) => {
+          if (finished) {
+            setModalVisible(false);
+          }
+        });
       }
-    }, [open, translateY, backdropOpacity, screenHeight]);
+    }, [open, translateY, backdropOpacity, screenHeight, useNativeDriver]);
 
     // PanResponder for drag down to dismiss
     const panResponder = React.useRef(
@@ -161,7 +181,7 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
           } else {
             Animated.spring(translateY, {
               toValue: 0,
-              useNativeDriver: true,
+              useNativeDriver,
               bounciness: 4,
             }).start();
           }
@@ -169,37 +189,59 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
       })
     ).current;
 
-    if (!open) return null;
+    if (!modalVisible) return null;
+
+    const maxHeight = Math.round(screenHeight * 0.85);
 
     return (
       <Modal
         transparent
-        visible={open}
+        visible={modalVisible}
         animationType="none"
         onRequestClose={closeSheet}
         statusBarTranslucent
       >
-        <View className="flex-1 justify-end">
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "flex-end",
+          }}
+          className="flex-1 justify-end"
+        >
           {/* Backdrop */}
           <Animated.View
-            style={{ opacity: backdropOpacity }}
-            className="absolute inset-0 bg-black/60"
+            style={[
+              StyleSheet.absoluteFillObject,
+              {
+                opacity: backdropOpacity,
+                backgroundColor: "rgba(0, 0, 0, 0.6)",
+              },
+            ]}
           >
-            <Pressable className="flex-1" onPress={closeSheet} />
+            <Pressable style={StyleSheet.absoluteFillObject} onPress={closeSheet} />
           </Animated.View>
 
           {/* Sheet Container */}
           <Animated.View
             ref={ref}
-            style={{ transform: [{ translateY }] }}
+            style={[
+              {
+                width: "100%",
+                maxHeight,
+                transform: [{ translateY }],
+                zIndex: 10,
+                elevation: 10,
+              },
+              style,
+            ]}
             className={cn(
-              "w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 shadow-2xl pt-2 pb-8 px-6 max-h-[85%]",
+              "w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 shadow-2xl pt-2 pb-8 px-6 overflow-hidden",
               className
             )}
             {...props}
           >
             {/* Drag Handle Bar */}
-            <View {...panResponder.panHandlers} className="w-full py-2 items-center">
+            <View {...panResponder.panHandlers} className="w-full py-3 items-center">
               <View className="w-12 h-1.5 rounded-full bg-neutral-300 dark:bg-neutral-700" />
             </View>
 
@@ -321,8 +363,11 @@ export const BottomSheetClose = React.forwardRef<View, BottomSheetCloseProps>(
 
     if (asChild && React.isValidElement(children)) {
       return React.cloneElement(children as React.ReactElement<any>, {
-        ref,
-        onPress: handlePress,
+        ...(ref != null ? { ref } : {}),
+        onPress: (e: any) => {
+          (children.props as any)?.onPress?.(e);
+          handlePress(e);
+        },
       });
     }
 
