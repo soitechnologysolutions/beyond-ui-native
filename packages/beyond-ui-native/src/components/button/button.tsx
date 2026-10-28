@@ -12,19 +12,19 @@ import { cn } from "../../utilities/cn";
 import { isTextContent } from "../../utilities/is-text";
 
 export const buttonVariants = cva(
-  "flex-row items-center justify-center rounded-xl transition-colors",
+  "flex-row items-center justify-center rounded-xl",
   {
     variants: {
       variant: {
-        default: "bg-primary-600 active:bg-primary-700 dark:bg-primary-600 dark:active:bg-primary-700",
-        primary: "bg-primary-600 active:bg-primary-700 dark:bg-primary-600 dark:active:bg-primary-700",
-        secondary: "bg-secondary-600 active:bg-secondary-700 dark:bg-secondary-600 dark:active:bg-secondary-700",
-        danger: "bg-danger-600 active:bg-danger-700 dark:bg-danger-600 dark:active:bg-danger-700",
-        destructive: "bg-danger-600 active:bg-danger-700 dark:bg-danger-600 dark:active:bg-danger-700",
-        success: "bg-success-600 active:bg-success-700 dark:bg-success-600 dark:active:bg-success-700",
-        warning: "bg-warning-600 active:bg-warning-700 dark:bg-warning-600 dark:active:bg-warning-700",
-        outline: "border border-neutral-300 dark:border-neutral-700 bg-transparent active:bg-neutral-100 dark:active:bg-neutral-800",
-        ghost: "bg-transparent active:bg-neutral-100 dark:active:bg-neutral-800",
+        default: "bg-primary-600 dark:bg-primary-600",
+        primary: "bg-primary-600 dark:bg-primary-600",
+        secondary: "bg-secondary-600 dark:bg-secondary-600",
+        danger: "bg-danger-600 dark:bg-danger-600",
+        destructive: "bg-danger-600 dark:bg-danger-600",
+        success: "bg-success-600 dark:bg-success-600",
+        warning: "bg-warning-600 dark:bg-warning-600",
+        outline: "border border-neutral-300 dark:border-neutral-700 bg-transparent",
+        ghost: "bg-transparent",
         link: "bg-transparent underline",
       },
       size: {
@@ -130,11 +130,12 @@ export const Button = React.forwardRef<View, ButtonProps>(function Button(
         {loading ? (
           <ActivityIndicator color={spinnerColor} className="mr-2" size="small" />
         ) : leftIcon ? (
-          <View className="mr-2">{leftIcon}</View>
+          <View pointerEvents="none" className="mr-2">{leftIcon}</View>
         ) : null}
 
         {isTextContent(children) ? (
           <Text
+            selectable={false}
             className={cn(
               buttonTextVariants({ variant, size }),
               textClassName
@@ -147,7 +148,7 @@ export const Button = React.forwardRef<View, ButtonProps>(function Button(
         )}
 
         {rightIcon && !loading ? (
-          <View className="ml-2">{rightIcon}</View>
+          <View pointerEvents="none" className="ml-2">{rightIcon}</View>
         ) : null}
       </Pressable>
     </ButtonContext.Provider>

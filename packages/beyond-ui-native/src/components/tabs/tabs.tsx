@@ -111,7 +111,7 @@ export const TabsTrigger = React.forwardRef<
       disabled={disabled}
       onPress={handlePress}
       className={cn(
-        "flex-1 items-center justify-center rounded-lg py-2 px-3 transition-all",
+        "flex-1 items-center justify-center rounded-lg py-2 px-3",
         isSelected
           ? "bg-white dark:bg-neutral-900 shadow-sm"
           : "bg-transparent opacity-70",

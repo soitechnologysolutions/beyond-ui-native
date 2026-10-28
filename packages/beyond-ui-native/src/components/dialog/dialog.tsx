@@ -56,12 +56,10 @@ export function Dialog({
 
   const handleOpenChange = React.useCallback(
     (nextOpen: boolean) => {
-      if (!isControlled) {
-        setUncontrolledOpen(nextOpen);
-      }
+      setUncontrolledOpen(nextOpen);
       onOpenChangeRef.current?.(nextOpen);
     },
-    [isControlled]
+    []
   );
 
   const close = React.useCallback(() => {
@@ -179,7 +177,6 @@ export const DialogOverlay = React.forwardRef<View, DialogOverlayProps>(
           },
           style as any,
         ]}
-        className={cn("bg-black/60", className)}
         onPress={() => {
           if (closeOnPress) {
             onOpenChange(false);
@@ -196,14 +193,24 @@ export interface DialogContentProps extends ViewProps {
   className?: string;
   overlayClassName?: string;
   closeOnOverlayPress?: boolean;
+  showCloseButton?: boolean;
   children: React.ReactNode;
 }
 
 export const DialogContent = React.forwardRef<View, DialogContentProps>(
   function DialogContent(
-    { className, overlayClassName, closeOnOverlayPress = true, children, style, ...props },
+    {
+      className,
+      overlayClassName,
+      closeOnOverlayPress = true,
+      showCloseButton = true,
+      children,
+      style,
+      ...props
+    },
     ref
   ) {
+    const { close } = useDialogContext();
     const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
     const maxHeight = Math.round(windowHeight * 0.85);
@@ -232,30 +239,50 @@ export const DialogContent = React.forwardRef<View, DialogContentProps>(
             closeOnPress={closeOnOverlayPress}
           />
           <View
-            ref={ref}
-            role="dialog"
-            aria-modal={true}
+            style={{
+              width: maxWidth,
+              maxHeight,
+              zIndex: 20,
+              elevation: 20,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.25,
+              shadowRadius: 16,
+            }}
             pointerEvents="auto"
-            style={[
-              {
-                width: maxWidth,
-                maxHeight,
-                zIndex: 20,
-                elevation: 20,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.25,
-                shadowRadius: 16,
-              },
-              style,
-            ]}
-            className={cn(
-              "rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 overflow-hidden",
-              className
-            )}
-            {...props}
           >
-            {children}
+            <View
+              ref={ref}
+              style={style}
+              className={cn(
+                "w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 overflow-hidden",
+                className
+              )}
+              {...props}
+            >
+              {showCloseButton && (
+                <View className="flex-row justify-end -mt-1 -mr-1 mb-1">
+                  <Pressable
+                    onPress={close}
+                    accessibilityRole="button"
+                    accessibilityLabel="Close dialog"
+                    hitSlop={12}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 16,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text className="text-neutral-500 dark:text-neutral-400 text-base font-bold">
+                      ✕
+                    </Text>
+                  </Pressable>
+                </View>
+              )}
+              {children}
+            </View>
           </View>
         </View>
       </DialogPortal>
@@ -334,16 +361,17 @@ export const DialogClose = React.forwardRef<View, DialogCloseProps>(
   function DialogClose({ asChild, children, onPress, ...props }, ref) {
     const { onOpenChange, close } = useDialogContext();
 
-    const handlePress = (e: GestureResponderEvent) => {
-      try {
-        if (close) {
-          close();
-        } else {
-          onOpenChange(false);
-        }
-      } finally {
-        onPress?.(e);
+    const handleClose = () => {
+      if (close) {
+        close();
+      } else {
+        onOpenChange(false);
       }
+    };
+
+    const handlePress = (e: GestureResponderEvent) => {
+      handleClose();
+      onPress?.(e);
     };
 
     if (asChild && React.isValidElement(children)) {
@@ -352,17 +380,15 @@ export const DialogClose = React.forwardRef<View, DialogCloseProps>(
         ...props,
         ...childProps,
         onPress: (e: GestureResponderEvent) => {
-          try {
-            childProps.onPress?.(e);
-          } finally {
-            handlePress(e);
-          }
+          handleClose();
+          childProps.onPress?.(e);
+          onPress?.(e);
         },
       });
     }
 
     return (
-      <Pressable ref={ref} onPress={handlePress} role="button" {...props}>
+      <Pressable ref={ref} onPress={handlePress} accessibilityRole="button" {...props}>
         {children}
       </Pressable>
     );

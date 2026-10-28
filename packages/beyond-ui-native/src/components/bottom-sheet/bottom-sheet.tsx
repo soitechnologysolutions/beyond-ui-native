@@ -58,12 +58,10 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
   const setOpen = React.useCallback(
     (nextOpen: boolean) => {
-      if (!isControlled) {
-        setUncontrolledOpen(nextOpen);
-      }
+      setUncontrolledOpen(nextOpen);
       onOpenChangeRef.current?.(nextOpen);
     },
-    [isControlled]
+    []
   );
 
   const closeSheet = React.useCallback(() => {
@@ -125,109 +123,37 @@ BottomSheetTrigger.displayName = "BottomSheetTrigger";
 
 export interface BottomSheetContentProps extends ViewProps {
   className?: string;
+  showCloseButton?: boolean;
   children: React.ReactNode;
 }
 
 export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps>(
-  ({ className, children, style, ...props }, ref) => {
+  ({ className, showCloseButton = true, children, style, ...props }, ref) => {
     const { open, closeSheet } = useBottomSheetContext();
     const { width: windowWidth, height: windowHeight } = useWindowDimensions();
-    const [modalVisible, setModalVisible] = React.useState(open);
 
-    const windowHeightRef = React.useRef(windowHeight);
-    windowHeightRef.current = windowHeight;
-
-    const translateY = React.useRef(new Animated.Value(windowHeight)).current;
-    const backdropOpacity = React.useRef(new Animated.Value(0)).current;
-    const useNativeDriver = Platform.OS !== "web";
-    const isFirstMount = React.useRef(true);
-
-    React.useEffect(() => {
-      if (isFirstMount.current) {
-        isFirstMount.current = false;
-        if (!open) {
-          return;
-        }
-      }
-
-      let timer: ReturnType<typeof setTimeout> | null = null;
-      const targetHeight = windowHeightRef.current || 800;
-
-      if (open) {
-        setModalVisible(true);
-        translateY.setValue(targetHeight);
-        Animated.parallel([
-          Animated.spring(translateY, {
-            toValue: 0,
-            useNativeDriver,
-            bounciness: 4,
-          }),
-          Animated.timing(backdropOpacity, {
-            toValue: 1,
-            duration: 250,
-            useNativeDriver,
-          }),
-        ]).start();
-      } else {
-        Animated.parallel([
-          Animated.timing(translateY, {
-            toValue: targetHeight,
-            duration: 200,
-            useNativeDriver,
-          }),
-          Animated.timing(backdropOpacity, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver,
-          }),
-        ]).start(() => {
-          setModalVisible(false);
-        });
-
-        // Safety fallback to guarantee modal unmounts on native driver callback drops
-        timer = setTimeout(() => {
-          setModalVisible(false);
-        }, 220);
-      }
-
-      return () => {
-        if (timer) clearTimeout(timer);
-      };
-    }, [open, translateY, backdropOpacity, useNativeDriver]);
-
-    // PanResponder for drag down to dismiss
+    // PanResponder for drag down on handle bar to dismiss
     const panResponder = React.useRef(
       PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onMoveShouldSetPanResponder: (_, gestureState) => gestureState.dy > 5,
-        onPanResponderMove: (_, gestureState) => {
-          if (gestureState.dy > 0) {
-            translateY.setValue(gestureState.dy);
-          }
-        },
         onPanResponderRelease: (_, gestureState) => {
-          if (gestureState.dy > 120 || gestureState.vy > 0.8) {
+          if (gestureState.dy > 40 || gestureState.vy > 0.5) {
             closeSheet();
-          } else {
-            Animated.spring(translateY, {
-              toValue: 0,
-              useNativeDriver,
-              bounciness: 4,
-            }).start();
           }
         },
       })
     ).current;
 
-    if (!modalVisible) return null;
+    if (!open) return null;
 
     const maxHeight = Math.round(windowHeight * 0.85);
 
     return (
       <Modal
         transparent
-        visible={modalVisible}
-        animationType="none"
+        visible={open}
+        animationType="fade"
         onRequestClose={closeSheet}
       >
         <View
@@ -244,7 +170,7 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
           pointerEvents="box-none"
         >
           {/* Backdrop */}
-          <Animated.View
+          <Pressable
             style={[
               StyleSheet.absoluteFillObject,
               {
@@ -255,45 +181,67 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
                 bottom: 0,
                 width: windowWidth,
                 height: windowHeight,
-                opacity: backdropOpacity,
                 backgroundColor: "rgba(0, 0, 0, 0.6)",
               },
             ]}
-          >
-            <Pressable style={StyleSheet.absoluteFillObject} onPress={closeSheet} />
-          </Animated.View>
+            onPress={closeSheet}
+          />
 
           {/* Sheet Container */}
-          <Animated.View
-            ref={ref}
+          <View
+            style={{
+              width: windowWidth,
+              maxHeight,
+              zIndex: 20,
+              elevation: 20,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: -4 },
+              shadowOpacity: 0.15,
+              shadowRadius: 12,
+            }}
             pointerEvents="auto"
-            style={[
-              {
-                width: windowWidth,
-                maxHeight,
-                transform: [{ translateY }],
-                zIndex: 20,
-                elevation: 20,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: -4 },
-                shadowOpacity: 0.15,
-                shadowRadius: 12,
-              },
-              style,
-            ]}
-            className={cn(
-              "w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 pt-2 pb-8 px-6 overflow-hidden",
-              className
-            )}
-            {...props}
           >
-            {/* Drag Handle Bar */}
-            <View {...panResponder.panHandlers} className="w-full py-3 items-center">
-              <View className="w-12 h-1.5 rounded-full bg-neutral-300 dark:bg-neutral-700" />
-            </View>
+            <View
+              ref={ref}
+              style={style}
+              className={cn(
+                "w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 pt-2 pb-8 px-6 overflow-hidden",
+                className
+              )}
+              {...props}
+            >
+              {/* Drag Handle Bar + Close Button Row */}
+              <View className="w-full flex-row items-center justify-between py-2">
+                <View style={{ width: 32 }} />
+                <View {...panResponder.panHandlers} className="py-2 px-6 items-center">
+                  <View className="w-12 h-1.5 rounded-full bg-neutral-300 dark:bg-neutral-700" />
+                </View>
+                {showCloseButton ? (
+                  <Pressable
+                    onPress={closeSheet}
+                    accessibilityRole="button"
+                    accessibilityLabel="Close bottom sheet"
+                    hitSlop={12}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 16,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text className="text-neutral-500 dark:text-neutral-400 text-base font-bold">
+                      ✕
+                    </Text>
+                  </Pressable>
+                ) : (
+                  <View style={{ width: 32 }} />
+                )}
+              </View>
 
-            {children}
-          </Animated.View>
+              {children}
+            </View>
+          </View>
         </View>
       </Modal>
     );
@@ -403,16 +351,17 @@ export const BottomSheetClose = React.forwardRef<View, BottomSheetCloseProps>(
   ({ asChild, children, onPress, ...props }, ref) => {
     const { closeSheet, setOpen } = useBottomSheetContext();
 
-    const handlePress = (e: any) => {
-      try {
-        if (closeSheet) {
-          closeSheet();
-        } else {
-          setOpen(false);
-        }
-      } finally {
-        onPress?.(e);
+    const handleClose = () => {
+      if (closeSheet) {
+        closeSheet();
+      } else {
+        setOpen(false);
       }
+    };
+
+    const handlePress = (e: any) => {
+      handleClose();
+      onPress?.(e);
     };
 
     if (asChild && React.isValidElement(children)) {
@@ -421,17 +370,15 @@ export const BottomSheetClose = React.forwardRef<View, BottomSheetCloseProps>(
         ...props,
         ...childProps,
         onPress: (e: any) => {
-          try {
-            childProps.onPress?.(e);
-          } finally {
-            handlePress(e);
-          }
+          handleClose();
+          childProps.onPress?.(e);
+          onPress?.(e);
         },
       });
     }
 
     return (
-      <Pressable ref={ref} onPress={handlePress} role="button" {...props}>
+      <Pressable ref={ref} onPress={handlePress} accessibilityRole="button" {...props}>
         {children}
       </Pressable>
     );

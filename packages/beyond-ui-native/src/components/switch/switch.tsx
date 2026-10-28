@@ -56,7 +56,7 @@ export const Switch = React.forwardRef<
       disabled={disabled}
       onPress={handlePress}
       className={cn(
-        "h-7 w-12 shrink-0 flex-row items-center rounded-full p-0.5 transition-colors",
+        "h-7 w-12 shrink-0 flex-row items-center rounded-full p-0.5",
         isChecked
           ? "bg-primary-600 dark:bg-primary-600"
           : "bg-neutral-300 dark:bg-neutral-700",
@@ -67,8 +67,9 @@ export const Switch = React.forwardRef<
     >
       <View
         role="presentation"
+        pointerEvents="none"
         className={cn(
-          "h-6 w-6 rounded-full bg-white shadow-sm transition-transform",
+          "h-6 w-6 rounded-full bg-white shadow-sm",
           isChecked ? "translate-x-5" : "translate-x-0",
           thumbClassName
         )}
