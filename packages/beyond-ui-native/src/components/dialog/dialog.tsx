@@ -5,7 +5,7 @@ import {
   Text,
   Pressable,
   StyleSheet,
-  Dimensions,
+  useWindowDimensions,
   Platform,
   type ViewProps,
   type TextProps,
@@ -98,6 +98,8 @@ export const DialogTrigger = React.forwardRef<View, DialogTriggerProps>(
 );
 DialogTrigger.displayName = "DialogTrigger";
 
+const InsidePortalContext = React.createContext(false);
+
 export interface DialogPortalProps {
   children: React.ReactNode;
   forceMount?: boolean;
@@ -105,21 +107,27 @@ export interface DialogPortalProps {
 
 export function DialogPortal({ children, forceMount }: DialogPortalProps) {
   const { open, onOpenChange } = useDialogContext();
+  const insidePortal = React.useContext(InsidePortalContext);
 
   if (!open && !forceMount) {
     return null;
   }
 
+  if (insidePortal) {
+    return <>{children}</>;
+  }
+
   return (
-    <Modal
-      transparent
-      visible={open}
-      animationType="fade"
-      onRequestClose={() => onOpenChange(false)}
-      statusBarTranslucent
-    >
-      {children}
-    </Modal>
+    <InsidePortalContext.Provider value={true}>
+      <Modal
+        transparent
+        visible={open}
+        animationType="fade"
+        onRequestClose={() => onOpenChange(false)}
+      >
+        {children}
+      </Modal>
+    </InsidePortalContext.Provider>
   );
 }
 DialogPortal.displayName = "DialogPortal";
@@ -132,13 +140,23 @@ export interface DialogOverlayProps extends PressableProps {
 export const DialogOverlay = React.forwardRef<View, DialogOverlayProps>(
   function DialogOverlay({ className, closeOnPress = true, style, ...props }, ref) {
     const { onOpenChange } = useDialogContext();
+    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
     return (
       <Pressable
         ref={ref}
         style={[
           StyleSheet.absoluteFillObject,
-          { backgroundColor: "rgba(0, 0, 0, 0.6)" },
+          {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: windowWidth,
+            height: windowHeight,
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
+          },
           style as any,
         ]}
         className={cn("bg-black/60", className)}
@@ -166,29 +184,28 @@ export const DialogContent = React.forwardRef<View, DialogContentProps>(
     { className, overlayClassName, closeOnOverlayPress = true, children, style, ...props },
     ref
   ) {
-    const [dimensions, setDimensions] = React.useState(() => Dimensions.get("window"));
+    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
-    React.useEffect(() => {
-      const sub = Dimensions.addEventListener("change", ({ window }) => {
-        setDimensions(window);
-      });
-      return () => sub?.remove();
-    }, []);
-
-    const maxHeight = Math.round(dimensions.height * 0.85);
-    const maxWidth = Math.min(512, Math.max(0, Math.round(dimensions.width - 32)));
+    const maxHeight = Math.round(windowHeight * 0.85);
+    const maxWidth = Math.min(512, Math.max(0, Math.round(windowWidth - 32)));
 
     return (
       <DialogPortal>
         <View
           style={{
-            flex: 1,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: windowWidth,
+            height: windowHeight,
             justifyContent: "center",
             alignItems: "center",
             paddingHorizontal: 16,
             paddingVertical: 24,
           }}
-          className="flex-1 items-center justify-center p-4"
+          pointerEvents="box-none"
         >
           <DialogOverlay
             className={overlayClassName}
@@ -200,16 +217,19 @@ export const DialogContent = React.forwardRef<View, DialogContentProps>(
             aria-modal={true}
             style={[
               {
-                width: "100%",
-                maxWidth,
+                width: maxWidth,
                 maxHeight,
                 zIndex: 10,
                 elevation: 10,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.25,
+                shadowRadius: 16,
               },
               style,
             ]}
             className={cn(
-              "w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-2xl overflow-hidden",
+              "rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 overflow-hidden",
               className
             )}
             {...props}

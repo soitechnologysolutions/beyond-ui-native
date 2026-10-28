@@ -5,7 +5,7 @@ import {
   Pressable,
   Animated,
   PanResponder,
-  Dimensions,
+  useWindowDimensions,
   Platform,
   StyleSheet,
   type ViewProps,
@@ -115,24 +115,17 @@ export interface BottomSheetContentProps extends ViewProps {
 export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps>(
   ({ className, children, style, ...props }, ref) => {
     const { open, closeSheet } = useBottomSheetContext();
-    const [dimensions, setDimensions] = React.useState(() => Dimensions.get("window"));
+    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
     const [modalVisible, setModalVisible] = React.useState(open);
 
-    React.useEffect(() => {
-      const sub = Dimensions.addEventListener("change", ({ window }) => {
-        setDimensions(window);
-      });
-      return () => sub?.remove();
-    }, []);
-
-    const screenHeight = dimensions.height;
-    const translateY = React.useRef(new Animated.Value(screenHeight)).current;
+    const translateY = React.useRef(new Animated.Value(windowHeight)).current;
     const backdropOpacity = React.useRef(new Animated.Value(0)).current;
     const useNativeDriver = Platform.OS !== "web";
 
     React.useEffect(() => {
       if (open) {
         setModalVisible(true);
+        translateY.setValue(windowHeight);
         Animated.parallel([
           Animated.spring(translateY, {
             toValue: 0,
@@ -148,7 +141,7 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
       } else {
         Animated.parallel([
           Animated.timing(translateY, {
-            toValue: screenHeight,
+            toValue: windowHeight,
             duration: 200,
             useNativeDriver,
           }),
@@ -163,7 +156,7 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
           }
         });
       }
-    }, [open, translateY, backdropOpacity, screenHeight, useNativeDriver]);
+    }, [open, translateY, backdropOpacity, windowHeight, useNativeDriver]);
 
     // PanResponder for drag down to dismiss
     const panResponder = React.useRef(
@@ -191,7 +184,7 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
 
     if (!modalVisible) return null;
 
-    const maxHeight = Math.round(screenHeight * 0.85);
+    const maxHeight = Math.round(windowHeight * 0.85);
 
     return (
       <Modal
@@ -199,20 +192,32 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
         visible={modalVisible}
         animationType="none"
         onRequestClose={closeSheet}
-        statusBarTranslucent
       >
         <View
           style={{
-            flex: 1,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: windowWidth,
+            height: windowHeight,
             justifyContent: "flex-end",
           }}
-          className="flex-1 justify-end"
+          pointerEvents="box-none"
         >
           {/* Backdrop */}
           <Animated.View
             style={[
               StyleSheet.absoluteFillObject,
               {
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: windowWidth,
+                height: windowHeight,
                 opacity: backdropOpacity,
                 backgroundColor: "rgba(0, 0, 0, 0.6)",
               },
@@ -226,16 +231,20 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
             ref={ref}
             style={[
               {
-                width: "100%",
+                width: windowWidth,
                 maxHeight,
                 transform: [{ translateY }],
                 zIndex: 10,
                 elevation: 10,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: -4 },
+                shadowOpacity: 0.15,
+                shadowRadius: 12,
               },
               style,
             ]}
             className={cn(
-              "w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 shadow-2xl pt-2 pb-8 px-6 overflow-hidden",
+              "w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 pt-2 pb-8 px-6 overflow-hidden",
               className
             )}
             {...props}

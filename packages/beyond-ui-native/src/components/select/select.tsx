@@ -6,7 +6,7 @@ import {
   ScrollView,
   TextInput,
   StyleSheet,
-  Dimensions,
+  useWindowDimensions,
   type ViewProps,
 } from "react-native";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -90,6 +90,7 @@ export const Select: React.FC<SelectProps> = ({
   className,
   children,
 }) => {
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
   const [open, setOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -176,22 +177,46 @@ export const Select: React.FC<SelectProps> = ({
             visible={open}
             animationType="fade"
             onRequestClose={() => setOpen(false)}
-            statusBarTranslucent
           >
             <View
               style={{
-                flex: 1,
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: windowWidth,
+                height: windowHeight,
                 justifyContent: "flex-end",
-                backgroundColor: "rgba(0, 0, 0, 0.6)",
               }}
-              className="flex-1 justify-end bg-black/60"
+              pointerEvents="box-none"
             >
-              <Pressable style={StyleSheet.absoluteFillObject} onPress={() => setOpen(false)} />
+              <Pressable
+                style={[
+                  StyleSheet.absoluteFillObject,
+                  {
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    width: windowWidth,
+                    height: windowHeight,
+                    backgroundColor: "rgba(0, 0, 0, 0.6)",
+                  },
+                ]}
+                onPress={() => setOpen(false)}
+              />
               <View
                 style={{
-                  maxHeight: Math.round(Dimensions.get("window").height * 0.75),
+                  width: windowWidth,
+                  maxHeight: Math.round(windowHeight * 0.75),
                   zIndex: 10,
                   elevation: 10,
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: -4 },
+                  shadowOpacity: 0.15,
+                  shadowRadius: 12,
                 }}
                 className="w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 p-6 overflow-hidden"
               >
@@ -325,6 +350,7 @@ export interface SelectContentProps {
 
 export const SelectContent: React.FC<SelectContentProps> = ({ title, children }) => {
   const { open, setOpen } = useSelectContext();
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   if (!open) return null;
 
   return (
@@ -333,22 +359,46 @@ export const SelectContent: React.FC<SelectContentProps> = ({ title, children })
       visible={open}
       animationType="fade"
       onRequestClose={() => setOpen(false)}
-      statusBarTranslucent
     >
       <View
         style={{
-          flex: 1,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: windowWidth,
+          height: windowHeight,
           justifyContent: "flex-end",
-          backgroundColor: "rgba(0, 0, 0, 0.6)",
         }}
-        className="flex-1 justify-end bg-black/60"
+        pointerEvents="box-none"
       >
-        <Pressable style={StyleSheet.absoluteFillObject} onPress={() => setOpen(false)} />
+        <Pressable
+          style={[
+            StyleSheet.absoluteFillObject,
+            {
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              width: windowWidth,
+              height: windowHeight,
+              backgroundColor: "rgba(0, 0, 0, 0.6)",
+            },
+          ]}
+          onPress={() => setOpen(false)}
+        />
         <View
           style={{
-            maxHeight: Math.round(Dimensions.get("window").height * 0.75),
+            width: windowWidth,
+            maxHeight: Math.round(windowHeight * 0.75),
             zIndex: 10,
             elevation: 10,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: -4 },
+            shadowOpacity: 0.15,
+            shadowRadius: 12,
           }}
           className="w-full bg-white dark:bg-neutral-900 rounded-t-3xl border-t border-neutral-200 dark:border-neutral-800 p-6 overflow-hidden"
         >

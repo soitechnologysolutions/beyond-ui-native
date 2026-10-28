@@ -7,7 +7,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  Dimensions,
+  useWindowDimensions,
   ScrollView,
   type ViewProps,
   type TextProps,
@@ -17,7 +17,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utilities/cn";
 
 export const modalVariants = cva(
-  "w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-2xl relative",
+  "rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 relative",
   {
     variants: {
       size: {
@@ -74,14 +74,7 @@ export function Modal({
   overlayClassName,
 }: ModalProps) {
   const isOpen = (controlledOpen !== undefined ? controlledOpen : visible) ?? false;
-  const [dimensions, setDimensions] = React.useState(() => Dimensions.get("window"));
-
-  React.useEffect(() => {
-    const sub = Dimensions.addEventListener("change", ({ window }) => {
-      setDimensions(window);
-    });
-    return () => sub?.remove();
-  }, []);
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
   const handleClose = React.useCallback(() => {
     onOpenChange?.(false);
@@ -95,11 +88,11 @@ export function Modal({
     md: 448,
     lg: 512,
     xl: 576,
-    full: dimensions.width - 32,
+    full: windowWidth - 32,
   };
   const targetMaxWidth = sizeWidthMap[size || "md"] || 448;
-  const maxWidth = Math.min(targetMaxWidth, Math.max(0, dimensions.width - 32));
-  const maxHeight = Math.round(dimensions.height * 0.85);
+  const maxWidth = Math.min(targetMaxWidth, Math.max(0, windowWidth - 32));
+  const maxHeight = Math.round(windowHeight * 0.85);
 
   return (
     <ModalContext.Provider value={{ open: isOpen, onOpenChange: (o) => !o && handleClose() }}>
@@ -108,17 +101,33 @@ export function Modal({
         visible={isOpen}
         animationType="fade"
         onRequestClose={handleClose}
-        statusBarTranslucent
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
-          style={{ flex: 1 }}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: windowWidth,
+            height: windowHeight,
+          }}
         >
           {/* Backdrop Overlay */}
           <Pressable
             style={[
               StyleSheet.absoluteFillObject,
-              { backgroundColor: "rgba(0, 0, 0, 0.6)" },
+              {
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: windowWidth,
+                height: windowHeight,
+                backgroundColor: "rgba(0, 0, 0, 0.6)",
+              },
             ]}
             className={cn("bg-black/60", overlayClassName)}
             onPress={closeOnOverlayPress ? handleClose : undefined}
@@ -129,23 +138,32 @@ export function Modal({
           {/* Modal Container */}
           <View
             style={{
-              flex: 1,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              width: windowWidth,
+              height: windowHeight,
               justifyContent: "center",
               alignItems: "center",
               paddingHorizontal: 16,
               paddingVertical: 24,
             }}
-            className="flex-1 items-center justify-center p-4 z-50"
+            pointerEvents="box-none"
           >
             <View
               role="dialog"
               aria-modal={true}
               style={{
-                width: "100%",
-                maxWidth,
+                width: maxWidth,
                 maxHeight,
                 zIndex: 10,
                 elevation: 10,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.25,
+                shadowRadius: 16,
               }}
               className={cn(modalVariants({ size }), "overflow-hidden", className)}
             >
