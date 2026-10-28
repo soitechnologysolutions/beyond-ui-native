@@ -17,6 +17,7 @@ import { cn } from "../../utilities/cn";
 export interface DialogContextValue {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  close: () => void;
 }
 
 export const DialogContext = React.createContext<DialogContextValue | null>(null);
@@ -28,6 +29,8 @@ export function useDialogContext(): DialogContextValue {
   }
   return context;
 }
+
+export const useDialog = useDialogContext;
 
 export interface DialogProps {
   open?: boolean;
@@ -56,8 +59,12 @@ export function Dialog({
     [isControlled, onOpenChange]
   );
 
+  const close = React.useCallback(() => {
+    handleOpenChange(false);
+  }, [handleOpenChange]);
+
   return (
-    <DialogContext.Provider value={{ open, onOpenChange: handleOpenChange }}>
+    <DialogContext.Provider value={{ open, onOpenChange: handleOpenChange, close }}>
       {children}
     </DialogContext.Provider>
   );
@@ -83,8 +90,8 @@ export const DialogTrigger = React.forwardRef<View, DialogTriggerProps>(
       return React.cloneElement(children as React.ReactElement<any>, {
         ...(ref != null ? { ref } : {}),
         onPress: (e: GestureResponderEvent) => {
-          (children.props as any)?.onPress?.(e);
           handlePress(e);
+          (children.props as any)?.onPress?.(e);
         },
       });
     }
@@ -215,12 +222,13 @@ export const DialogContent = React.forwardRef<View, DialogContentProps>(
             ref={ref}
             role="dialog"
             aria-modal={true}
+            pointerEvents="auto"
             style={[
               {
                 width: maxWidth,
                 maxHeight,
-                zIndex: 10,
-                elevation: 10,
+                zIndex: 20,
+                elevation: 20,
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 8 },
                 shadowOpacity: 0.25,
@@ -311,10 +319,14 @@ export interface DialogCloseProps extends PressableProps {
 
 export const DialogClose = React.forwardRef<View, DialogCloseProps>(
   function DialogClose({ asChild, children, onPress, ...props }, ref) {
-    const { onOpenChange } = useDialogContext();
+    const { onOpenChange, close } = useDialogContext();
 
     const handlePress = (e: GestureResponderEvent) => {
-      onOpenChange(false);
+      if (close) {
+        close();
+      } else {
+        onOpenChange(false);
+      }
       onPress?.(e);
     };
 
@@ -322,8 +334,8 @@ export const DialogClose = React.forwardRef<View, DialogCloseProps>(
       return React.cloneElement(children as React.ReactElement<any>, {
         ...(ref != null ? { ref } : {}),
         onPress: (e: GestureResponderEvent) => {
-          (children.props as any)?.onPress?.(e);
           handlePress(e);
+          (children.props as any)?.onPress?.(e);
         },
       });
     }

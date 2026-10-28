@@ -15,21 +15,24 @@ import { cn } from "../../utilities/cn";
 import { Text } from "../text/text";
 import { Heading } from "../text/heading";
 
-interface BottomSheetContextValue {
+export interface BottomSheetContextValue {
   open: boolean;
   setOpen: (open: boolean) => void;
   closeSheet: () => void;
+  close: () => void;
 }
 
-const BottomSheetContext = React.createContext<BottomSheetContextValue | null>(null);
+export const BottomSheetContext = React.createContext<BottomSheetContextValue | null>(null);
 
-function useBottomSheetContext() {
+export function useBottomSheetContext(): BottomSheetContextValue {
   const context = React.useContext(BottomSheetContext);
   if (!context) {
     throw new Error("BottomSheet components must be used within a BottomSheet");
   }
   return context;
 }
+
+export const useBottomSheet = useBottomSheetContext;
 
 export interface BottomSheetProps {
   open?: boolean;
@@ -63,7 +66,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   }, [setOpen]);
 
   return (
-    <BottomSheetContext.Provider value={{ open: isOpen, setOpen, closeSheet }}>
+    <BottomSheetContext.Provider value={{ open: isOpen, setOpen, closeSheet, close: closeSheet }}>
       {children}
     </BottomSheetContext.Provider>
   );
@@ -90,8 +93,8 @@ export const BottomSheetTrigger = React.forwardRef<View, BottomSheetTriggerProps
       return React.cloneElement(children as React.ReactElement<any>, {
         ...(ref != null ? { ref } : {}),
         onPress: (e: any) => {
-          (children.props as any)?.onPress?.(e);
           handlePress(e);
+          (children.props as any)?.onPress?.(e);
         },
       });
     }
@@ -121,8 +124,18 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
     const translateY = React.useRef(new Animated.Value(windowHeight)).current;
     const backdropOpacity = React.useRef(new Animated.Value(0)).current;
     const useNativeDriver = Platform.OS !== "web";
+    const isFirstMount = React.useRef(true);
 
     React.useEffect(() => {
+      if (isFirstMount.current) {
+        isFirstMount.current = false;
+        if (!open) {
+          return;
+        }
+      }
+
+      let timer: ReturnType<typeof setTimeout> | null = null;
+
       if (open) {
         setModalVisible(true);
         translateY.setValue(windowHeight);
@@ -150,12 +163,19 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
             duration: 200,
             useNativeDriver,
           }),
-        ]).start(({ finished }) => {
-          if (finished) {
-            setModalVisible(false);
-          }
+        ]).start(() => {
+          setModalVisible(false);
         });
+
+        // Safety fallback to guarantee modal unmounts on native driver callback drops
+        timer = setTimeout(() => {
+          setModalVisible(false);
+        }, 220);
       }
+
+      return () => {
+        if (timer) clearTimeout(timer);
+      };
     }, [open, translateY, backdropOpacity, windowHeight, useNativeDriver]);
 
     // PanResponder for drag down to dismiss
@@ -229,13 +249,14 @@ export const BottomSheetContent = React.forwardRef<View, BottomSheetContentProps
           {/* Sheet Container */}
           <Animated.View
             ref={ref}
+            pointerEvents="auto"
             style={[
               {
                 width: windowWidth,
                 maxHeight,
                 transform: [{ translateY }],
-                zIndex: 10,
-                elevation: 10,
+                zIndex: 20,
+                elevation: 20,
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: -4 },
                 shadowOpacity: 0.15,
@@ -374,8 +395,8 @@ export const BottomSheetClose = React.forwardRef<View, BottomSheetCloseProps>(
       return React.cloneElement(children as React.ReactElement<any>, {
         ...(ref != null ? { ref } : {}),
         onPress: (e: any) => {
-          (children.props as any)?.onPress?.(e);
           handlePress(e);
+          (children.props as any)?.onPress?.(e);
         },
       });
     }

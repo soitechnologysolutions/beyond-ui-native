@@ -37,6 +37,7 @@ export const modalVariants = cva(
 export interface ModalContextValue {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  close: () => void;
 }
 
 export const ModalContext = React.createContext<ModalContextValue | null>(null);
@@ -48,6 +49,8 @@ export function useModalContext(): ModalContextValue {
   }
   return context;
 }
+
+export const useModal = useModalContext;
 
 export interface ModalProps extends VariantProps<typeof modalVariants> {
   open?: boolean;
@@ -95,7 +98,7 @@ export function Modal({
   const maxHeight = Math.round(windowHeight * 0.85);
 
   return (
-    <ModalContext.Provider value={{ open: isOpen, onOpenChange: (o) => !o && handleClose() }}>
+    <ModalContext.Provider value={{ open: isOpen, onOpenChange: (o) => !o && handleClose(), close: handleClose }}>
       <RNModal
         transparent
         visible={isOpen}
@@ -155,11 +158,12 @@ export function Modal({
             <View
               role="dialog"
               aria-modal={true}
+              pointerEvents="auto"
               style={{
                 width: maxWidth,
                 maxHeight,
-                zIndex: 10,
-                elevation: 10,
+                zIndex: 20,
+                elevation: 20,
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 8 },
                 shadowOpacity: 0.25,

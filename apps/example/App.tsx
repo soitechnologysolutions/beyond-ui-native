@@ -171,8 +171,8 @@ function ComponentsShowcase() {
                 variant="outline"
                 size="md"
                 onPress={() => {
-                  toast.success("Action: Export Data");
                   setIsSheetOpen(false);
+                  toast.success("Analytics report exported successfully!");
                 }}
               >
                 📊 Export Analytics Report
@@ -181,8 +181,8 @@ function ComponentsShowcase() {
                 variant="outline"
                 size="md"
                 onPress={() => {
-                  toast.info("Action: Invite Team");
                   setIsSheetOpen(false);
+                  toast.info("Organization invite link copied!");
                 }}
               >
                 👥 Invite Organization Member
@@ -190,7 +190,11 @@ function ComponentsShowcase() {
             </BottomSheetBody>
             <BottomSheetFooter>
               <BottomSheetClose asChild>
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onPress={() => setIsSheetOpen(false)}
+                >
                   Cancel
                 </Button>
               </BottomSheetClose>
@@ -373,7 +377,11 @@ function ComponentsShowcase() {
             </DialogHeader>
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onPress={() => setIsDialogOpen(false)}
+                >
                   Cancel
                 </Button>
               </DialogClose>
@@ -382,7 +390,7 @@ function ComponentsShowcase() {
                 size="sm"
                 onPress={() => {
                   setIsDialogOpen(false);
-                  toast.success("Access key revoked.");
+                  toast.success("Access key revoked successfully.");
                 }}
               >
                 Confirm Revoke
